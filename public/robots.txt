@@ -1,0 +1,28 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Allow: /
+
+Sitemap: https://localhost:3000/sitemap.xml
+
+# Allow all robots to visit all files
+User-agent: *
+Disallow:
+
+# Disallow specific directories
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow specific files
+Disallow: /private-file.html
+
+# Allow Googlebot to crawl everything
+User-agent: Googlebot
+Allow: /
+
+# Disallow all robots from accessing the following directory
+User-agent: *
+Disallow: /no-crawl/
+
+# Sitemap location
+Sitemap: https://localhost:3000/sitemap.xml
