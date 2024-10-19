@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document,Model, Types} from 'mongoose';
-import { ISubbloggers } from './Subbloggers';
+import { ISubbloggers } from './BlogSecondSubSection';
 // Import the IUser interface
 export interface IBlogger extends Document {
     title:string;

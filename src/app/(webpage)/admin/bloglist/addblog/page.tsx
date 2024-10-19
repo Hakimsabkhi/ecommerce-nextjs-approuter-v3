@@ -1,4 +1,4 @@
-import AddBlogs from '@/components/Bloges/AddBlogs';
+import AddBlogs from '@/components/Bloge/AddBlogs';
 
 import React from 'react';
 

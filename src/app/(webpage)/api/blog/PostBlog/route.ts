@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import stream from "stream";
-import Blog from "@/models/Blog";
-import Blogger from "@/models/Blogger";
-import Subbloggers from "@/models/Subbloggers"; // Use singular for consistency
+import Blog from "@/models/BlogMainSection";
+import Blogger from "@/models/BlogFirstSubSection";
+import Subbloggers from "@/models/BlogSecondSubSection"; // Use singular for consistency
 import connectToDatabase from "@/lib/db";
 import { getToken } from "next-auth/jwt";
 import User from "@/models/User";

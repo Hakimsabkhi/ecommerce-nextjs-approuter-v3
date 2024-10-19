@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IBlogger } from './Blogger';
+import { IBlogger } from './BlogFirstSubSection';
 import { IUser } from './User';
 
 export interface IBlog extends Document {

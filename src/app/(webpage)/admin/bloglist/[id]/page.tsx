@@ -1,4 +1,4 @@
-import ModifyBlog from '@/components/Bloges/ModifyBlog'
+import ModifyBlog from '@/components/Bloge/ModifyBlog'
 import React from 'react'
 
 const page = () => {

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  Blog from '@/models/Blog';
-import Blogger from '@/models/Blogger';
-import Subbloggers from '@/models/Subbloggers';
+import  Blog from '@/models/BlogMainSection';
+import Blogger from '@/models/BlogFirstSubSection';
+import Subbloggers from '@/models/BlogSecondSubSection';
 import User from '@/models/User';
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
