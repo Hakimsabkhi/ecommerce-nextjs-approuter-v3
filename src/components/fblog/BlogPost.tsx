@@ -6,28 +6,28 @@ import Blogcomp from './blogcomp/Blogcomp';
 import Blogcomment from './blogcomp/Blogcomment';
 import Blogright from './blogcomp/Blogright';
 interface blog {
-    title: string;
-    description: String;
-    imageUrl: string;
-    bloggers: bloggers[];
-    slug: string;
-    user:{
-      username:string;
-    }
-    vadmin:string;
-    createdAt:string;
+  title: string;
+  description: String;
+  imageUrl: string;
+  blogfirstsubsection: blogfirstsubsection[];
+  slug: string;
+  user:{
+    username:string;
   }
-  interface bloggers{
-    title: string;
-    description: String;
-    imageUrl: string;
-    subbloggers: Subbloggers[];
-  }
-  interface Subbloggers{
-    title: string;
-    description: String;
-    imageUrl: string;
-  }
+  vadmin: string;
+  createdAt: string;
+}
+interface blogfirstsubsection {
+  title: string;
+  description: String;
+  imageUrl: string;
+  blogsecondsubsection: blogsecondsubsection[];
+}
+interface blogsecondsubsection {
+  title: string;
+  description: String;
+  imageUrl: string;
+}
   interface blogprops{
     blog:blog
   }

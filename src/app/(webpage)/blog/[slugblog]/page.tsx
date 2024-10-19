@@ -2,28 +2,28 @@ import BlogPost from '@/components/fblog/BlogPost';
 import { notFound } from 'next/navigation';
 import React from 'react';
 interface blog {
-    title: string;
-    description: String;
-    imageUrl: string;
-    bloggers: bloggers[];
-    slug: string;
-    user:{
-      username:string;
-    }
-    vadmin:string;
-    createdAt:string;
+  title: string;
+  description: String;
+  imageUrl: string;
+  blogfirstsubsection: blogfirstsubsection[];
+  slug: string;
+  user:{
+    username:string;
   }
-  interface bloggers{
-    title: string;
-    description: String;
-    imageUrl: string;
-    subbloggers: Subbloggers[];
-  }
-  interface Subbloggers{
-    title: string;
-    description: String;
-    imageUrl: string;
-  }
+  vadmin: string;
+  createdAt: string;
+}
+interface blogfirstsubsection {
+  title: string;
+  description: String;
+  imageUrl: string;
+  blogsecondsubsection: blogsecondsubsection[];
+}
+interface blogsecondsubsection {
+  title: string;
+  description: String;
+  imageUrl: string;
+}
 const fetchBlogData = async (id: string): Promise<blog> => {
   
       const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/GetBlogBySlugF/${id}`, {
@@ -51,9 +51,9 @@ const fetchBlogData = async (id: string): Promise<blog> => {
     if (!id) {
       return notFound();
     }
-  
-   
+
     const blog = await fetchBlogData(id);
+    console.log(blog)
    
     return (
         <div>
