@@ -8,15 +8,17 @@ interface SubBlogger {
     image: File | null;
   }
   
+interface Blogger {
+  title: string;
+  description: string;
+  image: File | null;
+  subBloggers: SubBlogger[];
+}
   interface BlogSecondSubSectionProps {
     index: number;
-    blogger: {
-      subBloggers: SubBlogger[];
-    };
-    bloggers: {
-      subBloggers: SubBlogger[];
-    }[];
-    setBloggers: React.Dispatch<React.SetStateAction<{ subBloggers: SubBlogger[] }[]>>;
+    blogger: Blogger;
+  bloggers: Blogger[];
+  setBloggers: React.Dispatch<React.SetStateAction<Blogger[]>>;
     addSubBlogger: (index: number) => void;
     removeSubBlogger: (index: number, subIndex: number) => void;
     handleSubBloggerImageChange: (index: number, subIndex: number, event: React.ChangeEvent<HTMLInputElement>) => void;

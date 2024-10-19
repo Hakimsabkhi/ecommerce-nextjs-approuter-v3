@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IBlogger } from './BlogFirstSubSection';
+import { IBlogFirstSubSection } from './BlogFirstSubSection';
 import { IUser } from './User';
 
-export interface IBlog extends Document {
+export interface IBlogMainSection extends Document {
     title: string;
     description: string;
     imageUrl: string;
     vadmin:string;
     user: IUser | string; 
-    bloggers: IBlogger[] | string[]; // Reference to bloggers
+    blogfirstsubsection: IBlogFirstSubSection[] | string[]; // Reference to bloggers
 }
 // Helper function to slugify category names
 const slugifyBlogName = (title: string): string => {
@@ -18,7 +18,7 @@ const slugifyBlogName = (title: string): string => {
       .replace(/[^\w-]+/g, ''); // Remove any special characters
   };
 
-const BlogSchema = new mongoose.Schema({
+const BlogMainSectionSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -33,7 +33,7 @@ const BlogSchema = new mongoose.Schema({
         required: true,
     },
     slug: { type: String, unique: true },
-    bloggers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blogger' }], // Change this to an array
+    blogfirstsubsection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogFirstSubSection' }], // Change this to an array
     vadmin:{ type: String,default:'not-approve'},
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     createdAt: {
@@ -41,7 +41,7 @@ const BlogSchema = new mongoose.Schema({
         default: Date.now, // Automatically set the creation date
     },
 });
-BlogSchema.pre('save', function (next) {
+BlogMainSectionSchema.pre('save', function (next) {
     if (this.isModified('title')) {
       this.slug = slugifyBlogName(this.title);
     }
@@ -49,6 +49,6 @@ BlogSchema.pre('save', function (next) {
   });
 
 // Export the model
-const Blog: Model<IBlog> = mongoose.models.Blog || mongoose.model<IBlog>('Blog', BlogSchema);
+const BlogMainSection: Model<IBlogMainSection> = mongoose.models.BlogMainSection || mongoose.model<IBlogMainSection>('BlogMainSection', BlogMainSectionSchema);
 
-export default Blog;
+export default BlogMainSection;

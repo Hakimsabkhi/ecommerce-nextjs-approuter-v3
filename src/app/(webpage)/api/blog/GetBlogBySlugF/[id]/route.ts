@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  Blog from '@/models/BlogMainSection';
-import Blogger from '@/models/BlogFirstSubSection';
-import Subbloggers from '@/models/BlogSecondSubSection';
+import  BlogMainSection from '@/models/BlogMainSection';
+import BlogFirstSubSection from '@/models/BlogFirstSubSection';
+import BlogSecondSubSection from '@/models/BlogSecondSubSection';
 import User from '@/models/User';
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -16,11 +16,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       );
     }
     await User.find();
-    await Subbloggers.find();
-    await Blogger.find().populate("subbloggers");
+    await BlogSecondSubSection.find();
+    await BlogFirstSubSection.find().populate("blogsecondsubsection");
     
     // Fetch all Blogs 
-    const Blogs = await Blog.findOne({ slug: slugblog })
+    const Blogs = await BlogMainSection.findOne({ slug: slugblog })
     .populate("user") // Populate the user field
     .populate("bloggers") // Populate the bloggers field
     .populate({

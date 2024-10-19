@@ -1,12 +1,14 @@
 import mongoose, { Schema, Document,Model} from 'mongoose';
+import { IBlogThirdSubSection } from './BlogThirdSubSection';
 // Import the IUser interface
-export interface ISubbloggers extends Document {
+export interface IBlogSecondSubSection extends Document {
     title:string;
     description:string;
     imageUrl: string,
+    blogthirdsubsection:  IBlogThirdSubSection[]| string[]; 
 }
 
-const SubbloggersSchema: Schema = new Schema({
+const BlogSecondSubSectionSchema: Schema = new Schema({
     title: {
         type: String,
     },
@@ -17,11 +19,12 @@ const SubbloggersSchema: Schema = new Schema({
     imageUrl: {
         type: String,
       
-    }
+    },
+    blogthirdsubsection: [{ type: Schema.Types.ObjectId, ref: 'BlogThirdSubSection' }], 
 },{ timestamps: true });
 
 
 
-const Subbloggers: Model<ISubbloggers> = mongoose.models.Subbloggers || mongoose.model<ISubbloggers>('Subbloggers', SubbloggersSchema);
+const BlogSecondSubSection: Model<IBlogSecondSubSection> = mongoose.models.BlogSecondSubSection || mongoose.model<IBlogSecondSubSection>('BlogSecondSubSection', BlogSecondSubSectionSchema);
 
-export default Subbloggers;
+export default BlogSecondSubSection;

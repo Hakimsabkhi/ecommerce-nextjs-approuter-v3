@@ -32,6 +32,7 @@ async function  getBlogs()  {
   }
 const Page = async () => {
     const blogs = await getBlogs();
+    console.log(blogs)
     return (
         <div>
             <Blogbanner/>

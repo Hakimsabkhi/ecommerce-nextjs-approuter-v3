@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  Blog from '@/models/BlogMainSection';
+import  BlogMainSection from '@/models/BlogMainSection';
 import User from '@/models/User';
 import { getToken } from 'next-auth/jwt';
 async function getUserFromToken(req: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     await User.find({})
   
     // Fetch all Blogs 
-    const Blogs = await Blog.find({}).populate('user','_id username email role').exec(); 
+    const Blogs = await BlogMainSection.find({}).populate('user','_id username email role').exec(); 
     // Return the fetched Blogs 
     return NextResponse.json(Blogs, { status: 200 });
   } catch (error) {

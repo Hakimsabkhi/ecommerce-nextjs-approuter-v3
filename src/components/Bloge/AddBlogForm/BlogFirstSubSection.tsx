@@ -6,9 +6,14 @@ import { MdClose } from 'react-icons/md';
 interface Blogger {
   title: string;
   description: string;
-  image?: File | null;
+  image: File | null;
+  subBloggers: SubBlogger[];
 }
-
+interface SubBlogger {
+  title: string;
+  description: string;
+  image: File | null;
+}
 interface BlogFirstSubSectionProps {
   index: number;
   blogger: Blogger;
