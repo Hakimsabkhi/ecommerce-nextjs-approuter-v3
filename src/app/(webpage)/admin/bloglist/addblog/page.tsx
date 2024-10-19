@@ -1,10 +1,11 @@
-import BlogPost from '@/components/fblog/BlogPost';
+import AddBlogs from '@/components/Bloges/AddBlogs';
+
 import React from 'react';
 
 const Page = () => {
     return (
         <div>
-            <BlogPost />
+            <AddBlogs/>
         </div>
     );
 }

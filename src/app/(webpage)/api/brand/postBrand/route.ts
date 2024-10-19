@@ -7,6 +7,7 @@ import stream from 'stream';
 import { promisify } from 'util';
 import { getToken } from 'next-auth/jwt';
 import User from '@/models/User';
+import { image } from 'html2canvas/dist/types/css/types/image';
 
 
 const uploadFiles = promisify(upload.fields([{ name: 'image', maxCount: 1 }, { name: 'logo', maxCount: 1 }]));
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
       if (existingBrand) {
         return NextResponse.json({ message: 'Brand with this name already exists' }, { status: 400 });
       }
-  
+      console.log(imageFile)
       let imageUrl = '';
       let logoUrl = '';
   

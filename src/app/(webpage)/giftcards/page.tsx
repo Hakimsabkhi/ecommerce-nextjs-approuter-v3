@@ -1,5 +1,5 @@
 
-import Blog from '@/components/Blog';
+import Blog from '@/components/fblog/Blog';
 import Blogbanner from '@/components/blogbanner';
 import Giftcard from '@/components/giftcard';
 import Giftcardbanner from '@/components/giftcardbanner';
