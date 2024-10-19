@@ -76,6 +76,15 @@ const NavAdmin = () => {
                 >
                   Orders
                 </p>
+              </Link> <Link href="/admin/bloglist">
+                <p
+                  onClick={() => handleClick('bloglist')}
+                  className={`text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer ${
+                    activeLink === 'bloglist' ? 'bg-gray-700' : ''
+                  }`}
+                >
+                  Blogs
+                </p>
               </Link>
               <Link href="/admin/company">
                 <p
@@ -145,6 +154,16 @@ const NavAdmin = () => {
               Orders
             </p>
           </Link>
+          <Link href="/admin/bloglist">
+                <p
+                  onClick={() => handleClick('bloglist')}
+                  className={`text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer ${
+                    activeLink === 'bloglist' ? 'bg-gray-700' : ''
+                  }`}
+                >
+                  Blogs
+                </p>
+              </Link>
           <Link href="/admin/company">
             <p
               onClick={() => handleClick('company')}
