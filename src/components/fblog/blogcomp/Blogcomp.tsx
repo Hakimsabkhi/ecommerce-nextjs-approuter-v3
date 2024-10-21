@@ -11,6 +11,11 @@ interface blog {
   }
   vadmin: string;
   createdAt: string;
+  blogCategory:blogCategory;
+}
+interface blogCategory{
+  _id:string
+  name:string
 }
 interface blogfirstsubsection {
   title: string;
@@ -43,10 +48,7 @@ const Blogcomp: React.FC<Blogcompprops> = ({ blog }) => {
           </p>
           <div className="flex items-center gap-2">
             <p className="text-xs px-4 py-2 rounded-md bg-gray-600 text-white">
-              Web Design
-            </p>
-            <p className="text-xs px-4 py-2 rounded-md bg-gray-600 text-white">
-              Freebies
+              {blog.blogCategory.name}
             </p>
           </div>
         </div>
@@ -103,16 +105,6 @@ const Blogcomp: React.FC<Blogcompprops> = ({ blog }) => {
   <p>No blogs available</p> // Fallback message if blog.bloggers is empty or undefined
 )}
 
-
-
-        {/* <div className='flex flex-col gap-6'>
-                            <p className='text-4xl font-bold '>I have odd cosmic thoughts every day</p>
-                            <div className='flex flex-col gap-4'>
-                                <p>For me, the most fascinating interface is Twitter. I have odd cosmic thoughts every day and I realized I could hold them to myself or share them with people who might be interested.</p>
-                                <p>Venus has a runaway greenhouse effect. I kind of want to know what happened there because we&apos;re twirling knobs here on Earth without knowing the consequences of it. Mars once had running water. It&apos;s bone dry today. Something bad happened there as well.</p>
-                                <Image src={blogpost3} alt="blogpost" />
-                            </div>
-                        </div> */}
       </div>
     </div>
   );

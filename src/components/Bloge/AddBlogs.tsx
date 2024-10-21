@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import BlogFirstSubSection from "./AddBlogForm/BlogFirstSubSection";
 import BlogSecondSubSection from "./AddBlogForm/BlogSecondSubSection";
 
 // Define TypeScript interfaces for better type safety
+
 interface SubBlogger {
   title: string;
   description: string;
@@ -37,7 +38,8 @@ const AddBlogs = () => {
     },
   ]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>([]);
+  const [category, setCategory] = useState("");
   const handleImageChange = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
@@ -89,7 +91,22 @@ const AddBlogs = () => {
     });
     setBloggers(updatedBloggers);
   };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/blog/Category/getAllCategory");
+        if (!response.ok) throw new Error("Failed to fetch categories");
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
+    
+    fetchCategories();
+   
+  }, []);
   const removeSubBlogger = (index: number, subIndex: number) => {
     const updatedBloggers = [...bloggers];
     updatedBloggers[index].subBloggers.splice(subIndex, 1);
@@ -115,7 +132,7 @@ const AddBlogs = () => {
     if (!blogTitle.trim()) newErrors.blogTitle = "Blog title is required";
     if (!blogDescription.trim()) newErrors.blogDescription = "Blog description is required";
     if (!blogImage) newErrors.blogImage = "Blog image is required";
-
+    if (!category)newErrors.category = "Blog Category is required";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return; // Stop if there are errors
 
@@ -123,6 +140,7 @@ const AddBlogs = () => {
     const formData = new FormData();
     formData.append("blogTitle", blogTitle);
     formData.append("blogDescription", blogDescription);
+    formData.append("blogCategory", category);
     if (blogImage) formData.append("blogImage", blogImage);
   
     bloggers.forEach((blogger, index) => {
@@ -220,6 +238,10 @@ const AddBlogs = () => {
               blogImage: errors.blogImage,
             }}
             suggestions={[]}
+            category={category}               // Add the current category
+            setCategory={setCategory}         // Add the function to set the category
+            categories={categories}           // Pass the categories array
+          
           />
           <div className="mt-4">
             {bloggers.map((blogger, index) => (

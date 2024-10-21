@@ -16,9 +16,14 @@ type Blog = {
   user: { _id: string; username: string;role:string };
   slug: string;
   vadmin: string;
+  blogCategory:blogCategory;
   createdAt: Date;
   updatedAt: Date;
 };
+interface blogCategory{
+_id:string;
+name:string;
+}
 
 const AddedBlog: React.FC = () => {
   const [addedBlogs, setAddedBlogs] = useState<Blog[]>([]);
@@ -167,26 +172,29 @@ const AddedBlog: React.FC = () => {
       <table className="table-auto w-full mt-4 uppercase">
         <thead>
           <tr className="bg-gray-800">
-            <th className="px-4 py-2">Icon</th>
+          <th className="px-4 py-2">Title</th>
+          <th className="px-4 py-2">Category</th>
             <th className="px-4 py-2">ImageURL</th>
-            <th className="px-4 py-2">Title</th>
+           
+           
             <th className="px-4 py-2">Author</th>
             <th className="px-4 py-2">Role</th>
             <th className="px-4 py-2 text-center">Action</th>
           </tr>
         </thead>
         <tbody>
+          
           {currentBlogs.map((blog) => (
             <tr key={blog._id} className="bg-white text-black">
-              <td className="border px-4 py-2">
-                <Image src={blog.imageUrl} width={30} height={30} alt="icon" />
-              </td>
-              <td className="border px-4 py-2">
+               <td className="border px-4 py-2">{blog.title}</td>
+               <td className="border px-4 py-2">{blog.blogCategory.name}</td>
+                            <td className="border px-4 py-2">
                 <Link href={blog.imageUrl}>
                   {blog.imageUrl.split("/").pop()}
                 </Link>
               </td>
-              <td className="border px-4 py-2">{blog.title}</td>
+             
+             
               <td className="border px-4 py-2">{blog?.user?.username}</td>
               <td className="border px-4 py-2">{blog?.user?.role}</td>
               <td className="border px-4 py-2">
@@ -226,7 +234,7 @@ const AddedBlog: React.FC = () => {
                   </button>
 
                   <Link
-                    href={`/${blog.vadmin === "approve" ? "" : "admin/"}${
+                    href={`/${blog.vadmin === "approve" ? "" : "admin/"}blog/${
                       blog.slug
                     }`}
                   >

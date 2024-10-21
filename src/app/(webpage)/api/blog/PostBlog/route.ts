@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         const blogDescription = formData.get("blogDescription") as string;
         const blogImage = formData.get("blogImage") as File | null; // Use File instead of Blob
         const bloggerCount = formData.get("bloggerCount") as string;
-
+        const blogCategory = formData.get("blogCategory");
 
      
 
@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
             description: blogDescription || '', // Default to an empty string if description is null
             imageUrl: blogImageUrl || '', // Default to an empty string if no image was uploaded
             blogfirstsubsection: bloggersIds,
+            blogCategory:blogCategory,
             user,
         });
 

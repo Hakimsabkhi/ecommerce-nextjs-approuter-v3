@@ -13,8 +13,16 @@ interface BlogMainSectionProps {
       blogTitle?: string;
       blogDescription?: string;
       blogImage?: string;
+      category?: string;
     };
     suggestions: string[];
+    category: string;
+    setCategory: (category: string) => void;
+    categories: Category[];
+  }
+  interface Category{
+    _id:string;
+    name:string;
   }
 const BlogMainSection: React.FC<BlogMainSectionProps> = ({
     blogTitle,
@@ -26,6 +34,9 @@ const BlogMainSection: React.FC<BlogMainSectionProps> = ({
     setBlogImage,
     errors,
     suggestions,
+    category,
+    setCategory,
+    categories,
   }) => {
   return (
     <div className="space-y-4">
@@ -44,6 +55,7 @@ const BlogMainSection: React.FC<BlogMainSectionProps> = ({
                 className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
                   errors.blogTitle ? "border-red-500" : ""
                 }`}
+                required
                 placeholder="Enter blog title"
                 aria-describedby="blogTitleError"
               />
@@ -65,6 +77,26 @@ const BlogMainSection: React.FC<BlogMainSectionProps> = ({
                   ))}
                 </ul>
               )}
+                     <div >
+          <label  htmlFor="Category"
+                className="block text-sm font-medium text-gray-700">Category </label>
+          <select
+            name="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
+              errors.category ? "border-red-500" : ""
+            }`}
+            required
+          >
+              <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
             </div>
             <div>
               <label
