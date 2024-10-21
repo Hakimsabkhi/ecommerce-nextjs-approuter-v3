@@ -4,6 +4,7 @@ import BlogMainSection from '@/models/BlogMainSection';
 import BlogFirstSubSection from '@/models/BlogFirstSubSection';
 import BlogSecondSubSection from '@/models/BlogSecondSubSection';
 import User from '@/models/User';
+import BlogCategory from '@/models/BlogCategory';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -22,11 +23,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     // Fetch all necessary data
     await User.find();
+    await BlogCategory.find();
     await BlogSecondSubSection.find();
     await BlogFirstSubSection.find().populate('blogsecondsubsection')
   
     // Fetch the blog with the given slug
-    const blog = await BlogMainSection.findOne({ slug: slugblog }).populate('blogfirstsubsection')
+    const blog = await BlogMainSection.findOne({ slug: slugblog }).populate('blogCategory').populate('user').populate('blogfirstsubsection')
     .populate({
       path:'blogfirstsubsection',
       populate:{

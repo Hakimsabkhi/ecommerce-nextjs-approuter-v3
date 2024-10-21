@@ -1,12 +1,13 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IBlogFirstSubSection } from './BlogFirstSubSection';
 import { IUser } from './User';
-
+import {IBlogCategory} from './BlogCategory'
 export interface IBlogMainSection extends Document {
     title: string;
     description: string;
     imageUrl: string;
     vadmin:string;
+    blogCategory: IBlogCategory | string; 
     user: IUser | string; 
     blogfirstsubsection: IBlogFirstSubSection[] | string[]; // Reference to bloggers
 }
@@ -35,6 +36,7 @@ const BlogMainSectionSchema = new mongoose.Schema({
     slug: { type: String, unique: true },
     blogfirstsubsection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogFirstSubSection' }], // Change this to an array
     vadmin:{ type: String,default:'not-approve'},
+    blogCategory:{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogCategory' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     createdAt: {
         type: Date,

@@ -14,8 +14,14 @@ interface blog {
   user:{
     username:string;
   }
+  blogCategory:blogCategory;
+
   vadmin: string;
   createdAt: string;
+}
+interface blogCategory{
+  _id:string
+  name:string
 }
 interface blogfirstsubsection {
   title: string;

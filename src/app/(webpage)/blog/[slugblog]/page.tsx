@@ -10,8 +10,13 @@ interface blog {
   user:{
     username:string;
   }
+  blogCategory:blogCategory;
   vadmin: string;
   createdAt: string;
+}
+interface blogCategory{
+  _id:string
+  name:string
 }
 interface blogfirstsubsection {
   title: string;
@@ -53,7 +58,7 @@ const fetchBlogData = async (id: string): Promise<blog> => {
     }
 
     const blog = await fetchBlogData(id);
-    console.log(blog)
+    
    
     return (
         <div>

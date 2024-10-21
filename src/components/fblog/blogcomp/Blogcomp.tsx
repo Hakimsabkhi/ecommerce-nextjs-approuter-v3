@@ -9,8 +9,14 @@ interface blog {
   user:{
     username:string;
   }
+  blogCategory:blogCategory;
+
   vadmin: string;
   createdAt: string;
+}
+interface blogCategory{
+  _id:string
+  name:string
 }
 interface blogfirstsubsection {
   title: string;
@@ -43,11 +49,9 @@ const Blogcomp: React.FC<Blogcompprops> = ({ blog }) => {
           </p>
           <div className="flex items-center gap-2">
             <p className="text-xs px-4 py-2 rounded-md bg-gray-600 text-white">
-              Web Design
+            {blog.blogCategory.name}
             </p>
-            <p className="text-xs px-4 py-2 rounded-md bg-gray-600 text-white">
-              Freebies
-            </p>
+           
           </div>
         </div>
       </div>

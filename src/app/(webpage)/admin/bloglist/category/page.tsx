@@ -128,12 +128,18 @@ const AddedCategories: React.FC = () => {
     <div className="mx-auto w-[90%] py-8 flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold">ALL categories</p>
-
-        <Link href="category/addcategory" className="w-[15%]">
-          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg w-full h-10">
+        <div className="grid grid-cols-2">
+        <Link href="/admin/bloglist" >
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  pl-10 pr-10  h-10">
+            Back
+          </button>
+          </Link>
+        <Link href="category/addcategory" >
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  h-10  pl-10 pr-10">
             Add a new category
           </button>
         </Link>
+        </div>
       </div>
       <input
         type="text"
