@@ -4,7 +4,7 @@ interface blog {
   title: string;
   description: String;
   imageUrl: string;
-  bloggers: bloggers[];
+  blogfirstsubsection: blogfirstsubsection[];
   slug: string;
   user:{
     username:string;
@@ -12,13 +12,13 @@ interface blog {
   vadmin: string;
   createdAt: string;
 }
-interface bloggers {
+interface blogfirstsubsection {
   title: string;
   description: String;
   imageUrl: string;
-  subbloggers: Subbloggers[];
+  blogsecondsubsection: blogsecondsubsection[];
 }
-interface Subbloggers {
+interface blogsecondsubsection {
   title: string;
   description: String;
   imageUrl: string;
@@ -63,8 +63,8 @@ const Blogcomp: React.FC<Blogcompprops> = ({ blog }) => {
           />
           <div className="flex flex-col gap-4">{blog.description}</div>
         </div>
-        {blog?.bloggers?.length > 0 ? (
-  blog.bloggers.map((blogers, index) => (
+        {blog.blogfirstsubsection?.length > 0 ? (
+  blog.blogfirstsubsection.map((blogers, index) => (
     <div key={index} className="flex flex-col gap-6">
       <p className="text-4xl font-bold">{blogers.title}</p>
       <div className="flex flex-col gap-4">
@@ -80,7 +80,7 @@ const Blogcomp: React.FC<Blogcompprops> = ({ blog }) => {
 
       {/* Map over subbloggers instead of bloggers */}
     {/* Map over subbloggers instead of bloggers */}
-    {blogers.subbloggers?.length > 0 && blogers.subbloggers.map((subblog, subIndex) => (
+    {blogers.blogsecondsubsection?.length > 0 && blogers.blogsecondsubsection.map((subblog, subIndex) => (
           <div key={subIndex} className="flex flex-col gap-6">
             <p className="text-xl font-bold">{subblog.title}</p>
             <div className="flex flex-col gap-4">

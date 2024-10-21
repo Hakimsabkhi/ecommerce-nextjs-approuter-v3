@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import stream from "stream";
-import Blog from "@/models/Blog";
-import Blogger from "@/models/Blogger";
-import Subbloggers from "@/models/Subbloggers"; // Use singular for consistency
+import BlogMainSection from "@/models/BlogMainSection";
+import BlogFirstSubSection from "@/models/BlogFirstSubSection";
+import BlogSecondSubSection from "@/models/BlogSecondSubSection"; // Use singular for consistency
 import connectToDatabase from "@/lib/db";
 import { getToken } from "next-auth/jwt";
 import User from "@/models/User";
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
             }
 
             // Create Blogger
-            const newBlogger = new Blogger({ title, description, imageUrl: bloggerImageUrl });
+            const newBlogger = new BlogFirstSubSection({ title, description, imageUrl: bloggerImageUrl });
             const savedBlogger = await newBlogger.save();
 
             // Handle sub-bloggers for each blogger
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 // Create and save sub-blogger
-                const newSubBlogger = new Subbloggers({ title: subTitle, description: subDescription, imageUrl: subBloggerImageUrl });
+                const newSubBlogger = new BlogSecondSubSection({ title: subTitle, description: subDescription, imageUrl: subBloggerImageUrl });
                 const savedSubBlogger = await newSubBlogger.save();
                
                 // Add saved sub-blogger ID to the array
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
             }
 
             // Update Blogger with sub-bloggers' IDs
-            savedBlogger.subbloggers = subBloggerIds;
+            savedBlogger.blogsecondsubsection = subBloggerIds;
             await savedBlogger.save();
 
             // Add the blogger ID to the bloggers array
@@ -130,11 +130,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Create and save the blog
-        const newBlog = new Blog({
+        const newBlog = new BlogMainSection({
             title: blogTitle,
             description: blogDescription || '', // Default to an empty string if description is null
             imageUrl: blogImageUrl || '', // Default to an empty string if no image was uploaded
-            bloggers: bloggersIds,
+            blogfirstsubsection: bloggersIds,
             user,
         });
 

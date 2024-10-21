@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document,Model} from 'mongoose';
 // Import the IUser interface
-export interface ISubbloggers extends Document {
+export interface IBlogThirdSubSection extends Document {
     title:string;
     description:string;
     imageUrl: string,
 }
 
-const SubbloggersSchema: Schema = new Schema({
+const BlogThirdSubSectionSchema: Schema = new Schema({
     title: {
         type: String,
     },
@@ -22,6 +22,6 @@ const SubbloggersSchema: Schema = new Schema({
 
 
 
-const Subbloggers: Model<ISubbloggers> = mongoose.models.Subbloggers || mongoose.model<ISubbloggers>('Subbloggers', SubbloggersSchema);
+const BlogThirdSubSection: Model<IBlogThirdSubSection> = mongoose.models.BlogThirdSubSection || mongoose.model<IBlogThirdSubSection>('BlogThirdSubSection', BlogThirdSubSectionSchema);
 
-export default Subbloggers;
+export default BlogThirdSubSection;

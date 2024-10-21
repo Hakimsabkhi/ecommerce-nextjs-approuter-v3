@@ -66,7 +66,7 @@ const AddedBlog: React.FC = () => {
   const updateBlogStatus = async (blogId: string, newStatus: string) => {
     try {
       const updateFormData = new FormData();
-      updateFormData.append("status", newStatus);
+      updateFormData.append("vadmin", newStatus);
 
       const response = await fetch(`/api/blog/updateBlogStatus/${blogId}`, {
         method: "PUT",
@@ -79,10 +79,10 @@ const AddedBlog: React.FC = () => {
       
       setAddedBlogs((prevData) =>
         prevData.map((item) =>
-          item._id === blogId ? { ...item, status: newStatus } : item
+          item._id === blogId ? { ...item, vadmin: newStatus } : item
         )
       );
-
+ 
       const data = await response.json();
       console.log("Blog status updated successfully:", data);
     } catch (error) {
@@ -144,12 +144,18 @@ const AddedBlog: React.FC = () => {
     <div className="mx-auto w-[90%] py-8 flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold">ALL Blogs</p>
-
-        <Link href="bloglist/addblog" className="w-[15%]">
-          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg w-full h-10">
+        <div className="grid grid-cols-2 gap-2 items-center justify-center">
+        <Link href="bloglist/category" className="w-full">
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg pl-4 pr-4  h-10">
+            CATEGORY BLOG
+          </button>
+        </Link>
+        <Link href="bloglist/addblog" className="w-full">
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  pl-4 pr-4  h-10">
             Add a new blog
           </button>
         </Link>
+        </div>
       </div>
       <input
         type="text"

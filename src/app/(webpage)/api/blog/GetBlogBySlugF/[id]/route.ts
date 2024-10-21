@@ -1,39 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  Blog from '@/models/Blog';
-import Blogger from '@/models/Blogger';
-import Subbloggers from '@/models/Subbloggers';
+import BlogMainSection from '@/models/BlogMainSection';
+import BlogFirstSubSection from '@/models/BlogFirstSubSection';
+import BlogSecondSubSection from '@/models/BlogSecondSubSection';
 import User from '@/models/User';
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Ensure the database connection is established
     await connectToDatabase(); 
+
     const slugblog = params.id;
+
+    // Validate the slugblog parameter
     if (!slugblog || typeof slugblog !== 'string') {
       return NextResponse.json(
-        { message: 'Blog name is required and should be existe' },
+        { message: 'Blog name is required and should exist' },
         { status: 400 }
       );
     }
+
+    // Fetch all necessary data
     await User.find();
-    await Subbloggers.find();
-    await Blogger.find().populate("subbloggers");
-    
-    // Fetch all Blogs 
-    const Blogs = await Blog.findOne({ slug: slugblog })
-    .populate("user") // Populate the user field
-    .populate("bloggers") // Populate the bloggers field
+    await BlogSecondSubSection.find();
+    await BlogFirstSubSection.find().populate('blogsecondsubsection')
+  
+    // Fetch the blog with the given slug
+    const blog = await BlogMainSection.findOne({ slug: slugblog }).populate('blogfirstsubsection')
     .populate({
-        path: 'bloggers',
-        populate: {
-            path: 'subbloggers' // Populate subbloggers within bloggers
-        }
+      path:'blogfirstsubsection',
+      populate:{
+        path:'blogsecondsubsection'
+      }
     })
     .exec();
-    // Return the fetched Blogs 
-    return NextResponse.json(Blogs, { status: 200 });
+      
+
+    // Check if the blog was found
+    if (!blog) {
+      return NextResponse.json(
+        { message: 'Blog not found' },
+        { status: 404 }
+      );
+    }
+
+    // Return the fetched blog
+    return NextResponse.json(blog, { status: 200 });
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('Error fetching blog:', error);
     return NextResponse.json({ error: 'Error fetching data' }, { status: 500 });
   }
 }

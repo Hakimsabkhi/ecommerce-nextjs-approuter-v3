@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  Blog from '@/models/Blog';
-import User from '@/models/User';
-import { getToken } from 'next-auth/jwt';
+import  BlogMainSection from '@/models/BlogMainSection';
+
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,7 +10,7 @@ export async function GET(req: NextRequest) {
   
   
     // Fetch all Blogs 
-    const Blogs = await Blog.find({}).exec(); 
+    const Blogs = await BlogMainSection.find().exec(); 
     // Return the fetched Blogs 
     return NextResponse.json(Blogs, { status: 200 });
   } catch (error) {
