@@ -9,6 +9,13 @@ interface SubBlogger {
   title: string;
   description: string;
   image: File | null;
+  subBlogger:SubBloggerSecond[]
+}
+
+interface SubBloggerSecond {
+  title: string;
+  description: string;
+  image: File | null;
 }
 
 interface Blogger {
@@ -53,7 +60,18 @@ const AddBlogs = () => {
       setBloggers(updatedBloggers);
     }
   };
-
+  const handleSubBloggerImageChange = (
+    bloggerIndex: number,
+    subIndex: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] || null;
+    if (file) {
+      const updatedBloggers = [...bloggers];
+      updatedBloggers[bloggerIndex].subBloggers[subIndex].image = file;
+      setBloggers(updatedBloggers);
+    }
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Validation and form submission logic here

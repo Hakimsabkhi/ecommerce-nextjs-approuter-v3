@@ -15,6 +15,13 @@ interface SubBlogger {
   title: string;
   description: string;
   image: File | null;
+  subBlogger:SubBloggerSecond[]
+}
+
+interface SubBloggerSecond {
+  title: string;
+  description: string;
+  image: File | null;
 }
 
 interface BlogFirstSubSectionProps {
@@ -81,6 +88,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
       title: '',
       description: '',
       image: null,
+      subBlogger: [],
     });
     setBloggers(updatedBloggers);
   };
@@ -134,10 +142,11 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
 
       <div>
         <label className="block text-sm font-medium text-gray-700">Blogger Image</label>
-        <input type="file" onChange={(e) => handleImageChange(index, e)} className="sr-only" />
+        
         <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
           <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
           Upload Image
+          <input type="file" onChange={(e) => handleImageChange(index, e)} className="sr-only" />
         </label>
         {blogger.image && (
           <div className="mt-2">
@@ -155,11 +164,10 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
       {/* Dynamically render BlogSecondSubSection */}
       {blogger.subBloggers.map((subBlogger, subIndex) => (
   <BlogSecondSubSection
-    key={subIndex}
-    index={subIndex} // Pass the index here
-    subBlogger={subBlogger}
-    handleRemove={() => removeSecondSubSection(subIndex)}
-  />
+          key={subIndex}
+          index={subIndex} // Pass the index here
+          subBlogger={subBlogger}
+          handleRemove={() => removeSecondSubSection(subIndex)}   />
 ))}
 
       {/* Button to add new Second SubSection */}
