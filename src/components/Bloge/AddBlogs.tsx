@@ -5,25 +5,26 @@ import React, { useState } from "react";
 import BlogMainSection from "./AddBlogForm/BlogMainSection";
 import BlogFirstSubSection from "./AddBlogForm/BlogFirstSubSection";
 
-interface SubBlogger {
-  title: string;
-  description: string;
-  image: File | null;
-  subBlogger:SubBloggerSecond[]
-}
-
-interface SubBloggerSecond {
-  title: string;
-  description: string;
-  image: File | null;
-}
-
 interface Blogger {
   title: string;
   description: string;
   image: File | null;
-  subBloggers: SubBlogger[];
+  subBloggers: BlogSecondSubSection[]; // Ensure subBloggers is used properly here
 }
+
+interface BlogSecondSubSection {
+  title: string;
+  description: string;
+  image: File | null;
+  blogthirdsubsection: BlogThirdSubSection[]; // Add blogthirdsubsection here if needed
+}
+
+interface BlogThirdSubSection {
+  title: string;
+  description: string;
+  image: File | null;
+}
+
 
 const AddBlogs = () => {
   const [blogTitle, setBlogTitle] = useState("");
@@ -60,18 +61,7 @@ const AddBlogs = () => {
       setBloggers(updatedBloggers);
     }
   };
-  const handleSubBloggerImageChange = (
-    bloggerIndex: number,
-    subIndex: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0] || null;
-    if (file) {
-      const updatedBloggers = [...bloggers];
-      updatedBloggers[bloggerIndex].subBloggers[subIndex].image = file;
-      setBloggers(updatedBloggers);
-    }
-  };
+ 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Validation and form submission logic here
