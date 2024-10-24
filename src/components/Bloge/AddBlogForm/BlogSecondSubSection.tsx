@@ -1,55 +1,63 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { MdClose } from 'react-icons/md';
+import BlogThirdSubSection from './BlogThirdSubSection';
 import { FaPlus, FaUpload } from 'react-icons/fa';
-import BlogThird from './BlogThirdSubSection';
 
-
-interface BlogSecondSubSection {
-  title: string;
-  description: string;
-  image: File | null;
-  blogthirdsubsection: BlogThirdSubSection[];
-}
-
-interface BlogThirdSubSection {
+interface blogthirdsubsection {
   title: string;
   description: string;
   image: File | null;
 }
+
+interface blogSecondSubSection {
+  title: string;
+  description: string;
+  image: File | null;
+  blogthirdsubsection: blogthirdsubsection[];
+}
+
 interface BlogSecondSubSectionProps {
   index: number;
-  
+  subBlogger: blogSecondSubSection;
   handleRemove: () => void;
-  currentSubBlogger:BlogSecondSubSection;
-  setCurrentSubBlogger: React.Dispatch<React.SetStateAction<BlogSecondSubSection>>;
-  handleImageSecondChange:(e: React.ChangeEvent<HTMLInputElement>) =>void;
-  removeThirdSubSection:(subIndex: number)=>void;
-  currentSubThirdBlogger:BlogThirdSubSection;
-  handleImageThirdChange:(e: React.ChangeEvent<HTMLInputElement>) =>void;
-  handleTitleThirdChange:(e: React.ChangeEvent<HTMLInputElement>) =>void;
-  handleDescriptionThirdChange:(e: React.ChangeEvent<HTMLTextAreaElement>) =>void;
-  addThirdSubSection:() =>void;
 }
 
 const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
   index,
- 
+  subBlogger,
   handleRemove,
-  currentSubBlogger,
-  setCurrentSubBlogger,
-  handleImageSecondChange,
-  removeThirdSubSection,
-  currentSubThirdBlogger,
-  handleImageThirdChange,
-  handleTitleThirdChange,
-  handleDescriptionThirdChange,
-  addThirdSubSection,
-
-
-
 }) => {
+  // Using useState for managing subBlogger state
+  const [currentSubBlogger, setCurrentSubBlogger] = useState<blogSecondSubSection>(subBlogger);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setCurrentSubBlogger((prev) => ({ ...prev, image: file }));
+  };
+
+  const removeThirdSubSection = (subIndex: number) => {
+    setCurrentSubBlogger((prev) => {
+      const updatedSubBloggers = prev.blogthirdsubsection.filter((_, index) => index !== subIndex);
+      return { ...prev, subBlogger: updatedSubBloggers };
+    });
+  };
+
+  const addThirdSubSection = () => {
+    setCurrentSubBlogger((prev) => ({
+      ...prev,
+      blogthirdsubsection: [
+        ...(prev.blogthirdsubsection || []),
+        {
+          title: '',
+          description: '',
+          image: null,
+        },
+      ],
+    }));
+  };
   
+
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
       <h2 className="text-2xl font-semibold text-gray-800">
@@ -97,7 +105,7 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
         <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
         <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
           Upload Image
-          <input type="file" accept="image/*"    onChange={handleImageSecondChange} className="sr-only" />
+          <input type="file" accept="image/*"    onChange={handleImageChange} className="sr-only" />
         </label>
         {currentSubBlogger.image && (
           <div className="flex justify-center">
@@ -113,15 +121,11 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
       </div>
 
       {currentSubBlogger.blogthirdsubsection.map((subBloggerItem, subSecondIndex) => (
-        <BlogThird
+        <BlogThirdSubSection
           key={subSecondIndex}
           index={subSecondIndex}
+          subBlogger={subBloggerItem}
           handleRemove={() => removeThirdSubSection(subSecondIndex)}
-          handleImageThirdChange={handleImageThirdChange}
-     handleTitleThirdChange={handleTitleThirdChange}
-     handleDescriptionThirdChange={handleDescriptionThirdChange}
-     currentSubThirdBlogger={currentSubThirdBlogger}
-
         />
       ))}
 

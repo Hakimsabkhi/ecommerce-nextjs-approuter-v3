@@ -9,23 +9,21 @@ interface Blogger {
   title: string;
   description: string;
   image: File | null;
-  subBloggers: BlogSecondSubSection[]; // Ensure subBloggers is used properly here
+  blogSecondSubSection: blogSecondSubSection[];
 }
 
-interface BlogSecondSubSection {
-  title: string;
-  description: string;
-  image: File | null;
-  blogthirdsubsection: BlogThirdSubSection[]; // Add blogthirdsubsection here if needed
-}
-
-interface BlogThirdSubSection {
+interface blogthirdsubsection {
   title: string;
   description: string;
   image: File | null;
 }
 
-
+interface blogSecondSubSection {
+  title: string;
+  description: string;
+  image: File | null;
+  blogthirdsubsection: blogthirdsubsection[];
+}
 const AddBlogs = () => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogDescription, setBlogDescription] = useState("");
@@ -41,7 +39,7 @@ const AddBlogs = () => {
       title: "",
       description: "",
       image: null,
-      subBloggers: [],
+      blogSecondSubSection: [],
     };
     setBloggers([...bloggers, newBlogger]);
   };
@@ -61,7 +59,7 @@ const AddBlogs = () => {
       setBloggers(updatedBloggers);
     }
   };
- 
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Validation and form submission logic here

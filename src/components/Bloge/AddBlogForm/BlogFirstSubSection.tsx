@@ -2,27 +2,28 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { FaUpload, FaPlus } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
-import BlogSecond from './BlogSecondSubSection';
+import BlogSecondSubSection from './BlogSecondSubSection';
 
 interface Blogger {
   title: string;
   description: string;
   image: File | null;
-  blogsecondsubsection: BlogSecondSubSection[];
+  blogSecondSubSection: blogSecondSubSection[];
 }
 
-interface BlogSecondSubSection {
-  title: string;
-  description: string;
-  image: File | null;
-  blogthirdsubsection: BlogThirdSubSection[];
-}
-
-interface BlogThirdSubSection {
+interface blogthirdsubsection {
   title: string;
   description: string;
   image: File | null;
 }
+
+interface blogSecondSubSection {
+  title: string;
+  description: string;
+  image: File | null;
+  blogthirdsubsection: blogthirdsubsection[];
+}
+
 
 interface BlogFirstSubSectionProps {
   index: number;
@@ -70,6 +71,7 @@ const toRoman = (num: number): string => {
   return roman;
 };
 
+
 const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   index,
   blogger,
@@ -80,37 +82,29 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   errors,
 }) => {
 
-  // Function to add a BlogSecondSubSection
-  const addSecondSubSection = () => {
-    const updatedBloggers = [...bloggers];
-  
-    // Check if the 'index' is within bounds
-    if (index >= 0 && index < updatedBloggers.length) {
-      // Ensure blogsecondsubsection exists and is an array
-      if (!Array.isArray(updatedBloggers[index].blogsecondsubsection)) {
-        updatedBloggers[index].blogsecondsubsection = [];
-      }
-  
-      // Push the new subsection
-      updatedBloggers[index].blogsecondsubsection.push({
-        title: '',
-        description: '',
-        image: null,
-        blogthirdsubsection: [],
-      });
-  
-      // Update the state with the new bloggers array
-      setBloggers(updatedBloggers);
-    } else {
-      console.error(`Invalid index: ${index}. Bloggers array length is ${updatedBloggers.length}.`);
-    }
-  };
-  
+  // Function to add a BlogSecondSubSection (SubBlogger)
+const addSecondSubSection = () => {
+  const updatedBloggers = [...bloggers];
+
+  // Ensure blogSecondSubSection is initialized as an array
+  if (!updatedBloggers[index].blogSecondSubSection) {
+    updatedBloggers[index].blogSecondSubSection = [];
+  }
+
+  updatedBloggers[index].blogSecondSubSection.push({
+    title: '',
+    description: '',
+    image: null,
+    blogthirdsubsection: [],
+  });
+
+  setBloggers(updatedBloggers);
+};
 
   // Function to remove a BlogSecondSubSection
   const removeSecondSubSection = (subIndex: number) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index].blogsecondsubsection.splice(subIndex, 1);
+    updatedBloggers[index].blogSecondSubSection.splice(subIndex, 1);
     setBloggers(updatedBloggers);
   };
 
@@ -119,61 +113,6 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
     updatedBloggers[index][field] = value;
     setBloggers(updatedBloggers);
   };
-
-  // State for managing a BlogSecondSubSection
-  const [currentSubBlogger, setCurrentSubBlogger] = useState<BlogSecondSubSection>({
-    title: '',
-    description: '',
-    image: null,
-    blogthirdsubsection: [],
-  });
-
-  const handleImageSecondChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    setCurrentSubBlogger((prev) => ({ ...prev, image: file }));
-  };
-
-  const removeThirdSubSection = (subIndex: number) => {
-    setCurrentSubBlogger((prev) => {
-      const updatedThirdSubsections = prev.blogthirdsubsection.filter((_, idx) => idx !== subIndex);
-      return { ...prev, blogthirdsubsection: updatedThirdSubsections };
-    });
-  };
-
-  // State for managing a BlogThirdSubSection
-  const [currentSubThirdBlogger, setCurrentSubThirdBlogger] = useState<BlogThirdSubSection>({
-    title: '',
-    description: '',
-    image: null,
-  });
-
-  const handleImageThirdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    setCurrentSubThirdBlogger((prev) => ({ ...prev, image: file }));
-  };
-
-  const handleTitleThirdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentSubThirdBlogger((prev) => ({ ...prev, title: e.target.value }));
-  };
-
-  const handleDescriptionThirdChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCurrentSubThirdBlogger((prev) => ({ ...prev, description: e.target.value }));
-  };
-
-const addThirdSubSection = () => {
-  setCurrentSubBlogger((prev) => ({
-    ...prev,
-    blogthirdsubsection: [
-      ...prev.blogthirdsubsection, // Spread the existing third subsections
-      {
-        title: '',
-        description: '',
-        image: null,
-      },
-    ],
-  }));
-};
-
 
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
@@ -231,21 +170,12 @@ const addThirdSubSection = () => {
       </div>
 
       {/* Dynamically render BlogSecondSubSection */}
-      {blogger?.blogsecondsubsection?.length > 0 && blogger.blogsecondsubsection.map((subBlogger, subIndex) => (
-  <BlogSecond
+      {blogger?.blogSecondSubSection && blogger.blogSecondSubSection.map((subBlogger, subIndex) => (
+  <BlogSecondSubSection
           key={subIndex}
-          index={subIndex}  
-          handleRemove={() => removeSecondSubSection(subIndex)}   
-          currentSubBlogger={currentSubBlogger}
-       setCurrentSubBlogger={setCurrentSubBlogger}
-     handleImageSecondChange={handleImageSecondChange}
-    removeThirdSubSection={removeThirdSubSection}
-     currentSubThirdBlogger={currentSubThirdBlogger}
-     handleImageThirdChange={handleImageThirdChange}
-     handleTitleThirdChange={handleTitleThirdChange}
-     handleDescriptionThirdChange={handleDescriptionThirdChange}
-    addThirdSubSection={addThirdSubSection}
-  />
+          index={subIndex} // Pass the index here
+          subBlogger={subBlogger}
+          handleRemove={() => removeSecondSubSection(subIndex)}   />
 ))}
 
       {/* Button to add new Second SubSection */}
