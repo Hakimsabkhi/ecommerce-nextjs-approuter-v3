@@ -27,8 +27,6 @@ export async function POST(req: NextRequest) {
       const imageFile = formData.get('image') as File | null;
       const firstSubSectionsData = JSON.parse(formData.get('firstSubSections') as string || '[]');
 
-      console.log('Received firstSubSectionsData:', firstSubSectionsData); // Debugging log
-
       let imageUrl = '';
       if (imageFile) {
           const imageBuffer = await imageFile.arrayBuffer();
@@ -55,16 +53,16 @@ export async function POST(req: NextRequest) {
       // Step 1: Save each first sub-section with nested second sub-sections
       const firstSubSections = await Promise.all(
           firstSubSectionsData.map(async (subSectionData: any) => {
-              const { title, description, imageUrl, blogsecondsubsection: secondSubSectionsData } = subSectionData;
+              const { title, description, imageUrl, subBloggers } = subSectionData;
 
               // Save each second sub-section inside the first sub-section
               const secondSubSections = await Promise.all(
-                  (secondSubSectionsData || []).map(async (secondSubSectionData: any) => {
-                      const { title, description, imageUrl } = secondSubSectionData;
+                  (subBloggers || []).map(async (subBlogger: any) => {
+                      const { title, description, image } = subBlogger;
                       const newSecondSubSection = new BlogSecondSubSection({
                           title,
                           description,
-                          imageUrl,
+                          imageUrl: image || undefined,
                       });
 
                       // Save the second sub-section and log if successful
@@ -78,7 +76,7 @@ export async function POST(req: NextRequest) {
                   title,
                   description,
                   imageUrl,
-                  blogsecondsubsection: secondSubSections,
+                  blogsecondsubsection: secondSubSections, // Link second sub-sections
               });
 
               // Save the first sub-section and log if successful
@@ -107,3 +105,4 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Error creating blog' }, { status: 500 });
   }
 }
+
