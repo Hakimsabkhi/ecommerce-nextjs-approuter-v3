@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/formidable": "^3.4.5",
     "@types/html-pdf": "^3.0.3",
     "@types/html2canvas": "^0.5.35",
     "@types/multer": "^1.4.11",

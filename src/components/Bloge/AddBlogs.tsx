@@ -61,31 +61,31 @@ const AddBlogs = () => {
     formData.append("title", blogTitle);
     formData.append("description", blogDescription);
     if (blogImage) formData.append("image", blogImage);
-  
 
-    bloggers.forEach((blogger, index) => {
-      formData.append(`bloggers[${index}][title]`, blogger.title);
-      formData.append(`bloggers[${index}][description]`, blogger.description);
-      if (blogger.image) formData.append(`bloggers[${index}][image]`, blogger.image);
-  
+    // Prepare `bloggers` data as a JSON string
+    const formattedBloggers = bloggers.map((blogger) => ({
+      title: blogger.title,
+      description: blogger.description,
+      image: blogger.image, // We'll handle images separately
+      subBloggers: blogger.subBloggers.map((subBlogger) => ({
+        title: subBlogger.title,
+        description: subBlogger.description,
+        image: subBlogger.image, // Handle separately if needed
+      })),
+    }));
 
-      blogger.subBloggers.forEach((subBlogger, subIndex) => {
-        formData.append(`bloggers[${index}][subBloggers][${subIndex}][title]`, subBlogger.title);
-        formData.append(`bloggers[${index}][subBloggers][${subIndex}][description]`, subBlogger.description);
-        if (subBlogger.image) formData.append(`bloggers[${index}][subBloggers][${subIndex}][image]`, subBlogger.image);
-      });
-    });
-  
+    // Add the formatted bloggers JSON to FormData
+    formData.append("firstSubSections", JSON.stringify(formattedBloggers));
+
     try {
-      // Send the data to the backend API
       const response = await fetch("/api/blogs/add", {
         method: "POST",
         body: formData,
       });
-  
+
       if (response.ok) {
         console.log("Blog added successfully");
-        // Optionally redirect or display success message
+        // Optionally reset the form here or navigate
       } else {
         const errorData = await response.json();
         console.error("Error adding blog:", errorData);
@@ -94,9 +94,8 @@ const AddBlogs = () => {
     } catch (error) {
       console.error("Submission failed:", error);
     }
-  };
+  }; 
   
-
   return (
     <div className="container mx-auto mt-4 border-2 p-4 rounded">
       <div className="">
