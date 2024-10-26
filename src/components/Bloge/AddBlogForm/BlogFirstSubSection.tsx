@@ -93,8 +93,20 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   };
 
   const updateBloggerField = (field: 'title' | 'description', value: string) => {
+    setBloggers((prevBloggers) => {
+      const updatedBloggers = [...prevBloggers];
+      updatedBloggers[index][field] = value;
+      return updatedBloggers;
+    });
+  };
+
+  const updateSubBloggerField = (
+    subIndex: number,
+    field: 'title' | 'description',
+    value: string
+  ) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index][field] = value;
+    updatedBloggers[index].subBloggers[subIndex][field] = value;
     setBloggers(updatedBloggers);
   };
 
@@ -155,11 +167,12 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
       {/* Dynamically render BlogSecondSubSection */}
       {blogger.subBloggers.map((subBlogger, subIndex) => (
   <BlogSecondSubSection
-    key={subIndex}
-    index={subIndex} // Pass the index here
-    subBlogger={subBlogger}
-    handleRemove={() => removeSecondSubSection(subIndex)}
-  />
+  key={subIndex}
+  index={subIndex}
+  subBlogger={subBlogger}
+  handleRemove={() => removeSecondSubSection(subIndex)}
+  updateSubBloggerField={updateSubBloggerField}
+/>
 ))}
 
       {/* Button to add new Second SubSection */}

@@ -56,8 +56,46 @@ const AddBlogs = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Validation and form submission logic here
+
+    const formData = new FormData();
+    formData.append("title", blogTitle);
+    formData.append("description", blogDescription);
+    if (blogImage) formData.append("image", blogImage);
+  
+
+    bloggers.forEach((blogger, index) => {
+      formData.append(`bloggers[${index}][title]`, blogger.title);
+      formData.append(`bloggers[${index}][description]`, blogger.description);
+      if (blogger.image) formData.append(`bloggers[${index}][image]`, blogger.image);
+  
+
+      blogger.subBloggers.forEach((subBlogger, subIndex) => {
+        formData.append(`bloggers[${index}][subBloggers][${subIndex}][title]`, subBlogger.title);
+        formData.append(`bloggers[${index}][subBloggers][${subIndex}][description]`, subBlogger.description);
+        if (subBlogger.image) formData.append(`bloggers[${index}][subBloggers][${subIndex}][image]`, subBlogger.image);
+      });
+    });
+  
+    try {
+      // Send the data to the backend API
+      const response = await fetch("/api/blogs/add", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (response.ok) {
+        console.log("Blog added successfully");
+        // Optionally redirect or display success message
+      } else {
+        const errorData = await response.json();
+        console.error("Error adding blog:", errorData);
+        setErrors(errorData.errors);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
+  
 
   return (
     <div className="container mx-auto mt-4 border-2 p-4 rounded">

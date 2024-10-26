@@ -9,21 +9,21 @@ interface SubBlogger {
 }
 
 interface BlogSecondSubSectionProps {
-  index: number; // Add index to the props
+  index: number;
   subBlogger: SubBlogger;
   handleRemove: () => void;
+  updateSubBloggerField: (subIndex: number, field: 'title' | 'description', value: string) => void;
 }
 
-
 const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
-  index, // Receive the index prop
+  index,
   subBlogger,
   handleRemove,
+  updateSubBloggerField,
 }) => {
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
-         <h2 className="text-2xl font-semibold text-gray-800"> SubSection {index + 1}</h2>
-      {/* Button to remove the second section */}
+      <h2 className="text-2xl font-semibold text-gray-800">SubSection {index + 1}</h2>
       <button
         type="button"
         onClick={handleRemove}
@@ -37,6 +37,7 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
         <input
           type="text"
           value={subBlogger.title}
+          onChange={(e) => updateSubBloggerField(index, 'title', e.target.value)}
           className="mt-1 block w-full py-2.5 pl-2 rounded-md border-gray-300 shadow-sm"
           placeholder="Enter sub-blogger title"
         />
@@ -46,6 +47,7 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
         <label className="block text-sm font-medium text-gray-700">Sub Blogger Description</label>
         <textarea
           value={subBlogger.description}
+          onChange={(e) => updateSubBloggerField(index, 'description', e.target.value)}
           className="mt-1 block w-full pl-2 pt-1 rounded-md border-gray-300 shadow-sm"
           rows={3}
           placeholder="Enter sub-blogger description"
