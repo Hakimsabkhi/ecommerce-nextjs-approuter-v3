@@ -8,22 +8,14 @@ interface Blogger {
   title: string;
   description: string;
   image: File | null;
-  blogSecondSubSection: blogSecondSubSection[];
+  subBloggers: SubBlogger[];
 }
 
-interface blogthirdsubsection {
+interface SubBlogger {
   title: string;
   description: string;
   image: File | null;
 }
-
-interface blogSecondSubSection {
-  title: string;
-  description: string;
-  image: File | null;
-  blogthirdsubsection: blogthirdsubsection[];
-}
-
 
 interface BlogFirstSubSectionProps {
   index: number;
@@ -32,6 +24,7 @@ interface BlogFirstSubSectionProps {
   setBloggers: React.Dispatch<React.SetStateAction<Blogger[]>>;
   removeBlogger: () => void;
   handleImageChange: (index: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubBloggerImageChange: (index: number, subIndex: number, event: React.ChangeEvent<HTMLInputElement>) => void;
   errors: { [key: string]: string };
 }
 
@@ -79,38 +72,43 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   setBloggers,
   removeBlogger,
   handleImageChange,
+  handleSubBloggerImageChange,
   errors,
 }) => {
 
   // Function to add a BlogSecondSubSection (SubBlogger)
-const addSecondSubSection = () => {
-  const updatedBloggers = [...bloggers];
-
-  // Ensure blogSecondSubSection is initialized as an array
-  if (!updatedBloggers[index].blogSecondSubSection) {
-    updatedBloggers[index].blogSecondSubSection = [];
-  }
-
-  updatedBloggers[index].blogSecondSubSection.push({
-    title: '',
-    description: '',
-    image: null,
-    blogthirdsubsection: [],
-  });
-
-  setBloggers(updatedBloggers);
-};
+  const addSecondSubSection = () => {
+    const updatedBloggers = [...bloggers];
+    updatedBloggers[index].subBloggers.push({
+      title: '',
+      description: '',
+      image: null,
+    });
+    setBloggers(updatedBloggers);
+  };
 
   // Function to remove a BlogSecondSubSection
   const removeSecondSubSection = (subIndex: number) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index].blogSecondSubSection.splice(subIndex, 1);
+    updatedBloggers[index].subBloggers.splice(subIndex, 1);
     setBloggers(updatedBloggers);
   };
 
   const updateBloggerField = (field: 'title' | 'description', value: string) => {
+    setBloggers((prevBloggers) => {
+      const updatedBloggers = [...prevBloggers];
+      updatedBloggers[index][field] = value;
+      return updatedBloggers;
+    });
+  };
+
+  const updateSubBloggerField = (
+    subIndex: number,
+    field: 'title' | 'description',
+    value: string
+  ) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index][field] = value;
+    updatedBloggers[index].subBloggers[subIndex][field] = value;
     setBloggers(updatedBloggers);
   };
 
@@ -127,14 +125,25 @@ const addSecondSubSection = () => {
       </button>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Title {toRoman(index + 1)}</label>
+        <label
+        htmlFor={`blogger${index}Title`}
+        className="block text-sm font-medium text-gray-700">Title {toRoman(index + 1)}</label>
         <input
           type="text"
           value={blogger.title}
           onChange={(e) => updateBloggerField('title', e.target.value)}
-          className="mt-1 block w-full py-2.5 pl-2 rounded-md border-gray-300 shadow-sm"
+          className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
+            errors[`blogger${index}Title`] ? 'border-red-500' : ''
+          }`}
           placeholder="Enter blogger title"
+          aria-describedby={`blogger${index}TitleError`}
         />
+        {errors[`blogger${index}Title`] && (
+          <p id={`blogger${index}TitleError`} className="mt-2 text-sm text-red-600">
+            {errors[`blogger${index}Title`]}
+          </p>
+        )}
+
       </div>
 
       <div>
@@ -152,9 +161,9 @@ const addSecondSubSection = () => {
         <label className="block text-sm font-medium text-gray-700">Blogger Image</label>
         
         <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        <input type="file" onChange={(e) => handleImageChange(index, e)} className="sr-only" />
           <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
           Upload Image
-          <input type="file" onChange={(e) => handleImageChange(index, e)} className="sr-only" />
         </label>
         {blogger.image && (
           <div className="mt-2">
@@ -170,12 +179,17 @@ const addSecondSubSection = () => {
       </div>
 
       {/* Dynamically render BlogSecondSubSection */}
-      {blogger?.blogSecondSubSection && blogger.blogSecondSubSection.map((subBlogger, subIndex) => (
+      {blogger.subBloggers.map((subBlogger, subIndex) => (
   <BlogSecondSubSection
-          key={subIndex}
-          index={subIndex} // Pass the index here
-          subBlogger={subBlogger}
-          handleRemove={() => removeSecondSubSection(subIndex)}   />
+  key={subIndex}
+  firstindex={index}
+  index={subIndex}
+  subBlogger={subBlogger}
+  handleRemove={() => removeSecondSubSection(subIndex)}
+  updateSubBloggerField={updateSubBloggerField}
+  handleSubBloggerImageChange={handleSubBloggerImageChange}
+  errors={errors}
+/>
 ))}
 
       {/* Button to add new Second SubSection */}

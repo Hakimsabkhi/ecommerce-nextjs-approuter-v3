@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Forbidden: Access is denied' }, { status: 404 });
           }
         const formData = await req.formData();
-        const blogTitle = formData.get("blogTitle") as string;
+ 
+    const blogTitle = formData.get("blogTitle") as string;
         const blogDescription = formData.get("blogDescription") as string;
         const blogImage = formData.get("blogImage") as File | null; // Use File instead of Blob
         const bloggerCount = formData.get("bloggerCount") as string;
@@ -139,12 +140,12 @@ export async function POST(req: NextRequest) {
             user,
         });
 
-        await newBlog.save();
+        await newBlog.save(); 
 
         return NextResponse.json(
             {
                 message: "Blog created successfully",
-                blog: newBlog,
+            blog: newBlog,
             },
             { status: 200 }
         );

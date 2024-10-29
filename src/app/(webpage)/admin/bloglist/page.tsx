@@ -23,6 +23,7 @@ type Blog = {
 interface blogCategory{
 _id:string;
 name:string;
+slug:string;
 }
 
 const AddedBlog: React.FC = () => {
@@ -187,7 +188,7 @@ const AddedBlog: React.FC = () => {
           {currentBlogs.map((blog) => (
             <tr key={blog._id} className="bg-white text-black">
                <td className="border px-4 py-2">{blog.title}</td>
-               <td className="border px-4 py-2">{blog.blogCategory.name}</td>
+               <td className="border px-4 py-2">{blog.blogCategory?.name}</td>
                             <td className="border px-4 py-2">
                 <Link href={blog.imageUrl}>
                   {blog.imageUrl.split("/").pop()}
@@ -234,7 +235,7 @@ const AddedBlog: React.FC = () => {
                   </button>
 
                   <Link
-                    href={`/${blog.vadmin === "approve" ? "" : "admin/"}blog/${
+                    href={`/${blog.vadmin === "approve" ? "" : "admin/"}blog/${blog.blogCategory.slug}/${
                       blog.slug
                     }`}
                   >

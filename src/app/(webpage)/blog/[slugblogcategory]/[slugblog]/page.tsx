@@ -40,7 +40,7 @@ const fetchBlogData = async (id: string): Promise<blog> => {
       });
   
       if (!res.ok) {
-        throw new Error('Blog not found');
+        notFound();
       }
   
       const data: blog = await res.json();
@@ -52,7 +52,7 @@ const fetchBlogData = async (id: string): Promise<blog> => {
   export default async function Page({ params }: { params: {slugblog: string } }) {
     const id = params?.slugblog;
 
-    // Early return if no product id
+ 
     if (!id) {
       return notFound();
     }

@@ -12,9 +12,9 @@ import DeletePopup from "@/components/Popup/DeletePopup";
 type Category = {
   _id: string;
   name: string;
-  imageUrl: string;
-  logoUrl: string;
   user:user;
+  vadmin:string;
+  slug:string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -87,6 +87,35 @@ const AddedCategories: React.FC = () => {
       setError(`[Category_GET] ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  
+  const updateBlogCategoryStatus = async (blogId: string, newStatus: string) => {
+    try {
+      const updateFormData = new FormData();
+      updateFormData.append("vadmin", newStatus);
+
+      const response = await fetch(`/api/blog/Category/updateBlogCategoryStatus/${blogId}`, {
+        method: "PUT",
+        body: updateFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      
+      setAddedCategory((prevData) =>
+        prevData.map((item) =>
+          item._id === blogId ? { ...item, vadmin: newStatus } : item
+        )
+      );
+ 
+      const data = await response.json();
+      console.log("Blog status updated successfully:", data);
+    } catch (error) {
+      console.error("Failed to update blog status:", error);
+      toast.error("Failed to update blog status");
     }
   };
 
@@ -166,6 +195,27 @@ const AddedCategories: React.FC = () => {
               <td>
                
                 <div className="flex items-center justify-center gap-2">
+                <select
+                    className={`w-50 text-black rounded-md p-2 ${
+                      item.vadmin === "not-approve"
+                        ? "bg-gray-400 text-white"
+                        : "bg-green-500 text-white"
+                    }`}
+                    value={item.vadmin}
+                    onChange={(e) =>
+                      updateBlogCategoryStatus(item._id, e.target.value)
+                    }
+                  >
+                    <option value="approve" className="text-white uppercase">
+                      Approve
+                    </option>
+                    <option
+                      value="not-approve"
+                      className="text-white uppercase"
+                    >
+                      Not approve
+                    </option>
+                  </select>
                   <Link href={`/admin/bloglist/category/${item._id}`}>
                     <button className="bg-gray-800 text-white w-28 h-10  hover:bg-gray-600 rounded-md">
                       Modify

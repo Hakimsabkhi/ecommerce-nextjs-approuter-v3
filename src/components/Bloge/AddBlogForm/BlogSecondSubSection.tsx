@@ -1,68 +1,35 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { MdClose } from 'react-icons/md';
-import BlogThirdSubSection from './BlogThirdSubSection';
-import { FaPlus, FaUpload } from 'react-icons/fa';
 
-interface blogthirdsubsection {
+interface SubBlogger {
   title: string;
   description: string;
   image: File | null;
-}
-
-interface blogSecondSubSection {
-  title: string;
-  description: string;
-  image: File | null;
-  blogthirdsubsection: blogthirdsubsection[];
 }
 
 interface BlogSecondSubSectionProps {
   index: number;
-  subBlogger: blogSecondSubSection;
+  firstindex:number;
+  subBlogger: SubBlogger;
   handleRemove: () => void;
+  updateSubBloggerField: (subIndex: number, field: 'title' | 'description', value: string) => void;
+  handleSubBloggerImageChange: (index: number, subIndex: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+  errors: { [key: string]: string };
 }
 
 const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
   index,
+  firstindex,
   subBlogger,
   handleRemove,
+  updateSubBloggerField,
+  handleSubBloggerImageChange,
+  errors,
 }) => {
-  // Using useState for managing subBlogger state
-  const [currentSubBlogger, setCurrentSubBlogger] = useState<blogSecondSubSection>(subBlogger);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    setCurrentSubBlogger((prev) => ({ ...prev, image: file }));
-  };
-
-  const removeThirdSubSection = (subIndex: number) => {
-    setCurrentSubBlogger((prev) => {
-      const updatedSubBloggers = prev.blogthirdsubsection.filter((_, index) => index !== subIndex);
-      return { ...prev, subBlogger: updatedSubBloggers };
-    });
-  };
-
-  const addThirdSubSection = () => {
-    setCurrentSubBlogger((prev) => ({
-      ...prev,
-      blogthirdsubsection: [
-        ...(prev.blogthirdsubsection || []),
-        {
-          title: '',
-          description: '',
-          image: null,
-        },
-      ],
-    }));
-  };
-  
-
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
-      <h2 className="text-2xl font-semibold text-gray-800">
-        SubSection {index + 1}
-      </h2>
+      <h2 className="text-2xl font-semibold text-gray-800">SubSection {index + 1}</h2>
       <button
         type="button"
         onClick={handleRemove}
@@ -72,71 +39,60 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
       </button>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Sub First Title
-        </label>
+        <label
+           htmlFor={`subBlogger${firstindex}${index}Title`}
+        className="block text-sm font-medium text-gray-700">Sub First Title</label>
         <input
           type="text"
-          value={currentSubBlogger.title}
-          onChange={(e) => setCurrentSubBlogger((prev) => ({ ...prev, title: e.target.value }))}
-          className="mt-1 block w-full py-2.5 pl-2 rounded-md border-gray-300 shadow-sm"
+          value={subBlogger.title}
+          onChange={(e) => updateSubBloggerField(index, 'title', e.target.value)}
+          className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
+            errors[`subBlogger${firstindex}${index}Title`]
+              ? "border-red-500"
+              : ""
+          }`}
           placeholder="Enter sub-blogger title"
+          aria-describedby={`subBlogger${firstindex}${index}TitleError`}
         />
+        {errors[`subBlogger${firstindex}${index}Title`] && (
+          <p
+            id={`subBlogger${firstindex}${index}TitleError`}
+            className="mt-2 text-sm text-red-600"
+          >
+            {errors[`subBlogger${firstindex}${index}Title`]}
+          </p>
+        )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Sub Blogger Description
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Sub Blogger Description</label>
         <textarea
-          value={currentSubBlogger.description}
-          onChange={(e) => setCurrentSubBlogger((prev) => ({ ...prev, description: e.target.value }))}
+          value={subBlogger.description}
+          onChange={(e) => updateSubBloggerField(index, 'description', e.target.value)}
           className="mt-1 block w-full pl-2 pt-1 rounded-md border-gray-300 shadow-sm"
           rows={3}
           placeholder="Enter sub-blogger description"
-        />
+        ></textarea>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Sub Blogger Image
-        </label>
-        
+        <label className="block text-sm font-medium text-gray-700">Sub Blogger Image</label>
         <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-        <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
+        <input type="file" onChange={(e) => handleSubBloggerImageChange(firstindex,index, e)} accept="image/*" className="sr-only" />
           Upload Image
-          <input type="file" accept="image/*"    onChange={handleImageChange} className="sr-only" />
         </label>
-        {currentSubBlogger.image && (
+        {subBlogger.image && (
           <div className="flex justify-center">
             <Image
               width={100}
               height={100}
-              src={URL.createObjectURL(currentSubBlogger.image)}
+              src={URL.createObjectURL(subBlogger.image)}
               alt="Sub-Blogger Image Preview"
               className="mt-2 w-fit h-80 rounded-md"
             />
           </div>
         )}
       </div>
-
-      {currentSubBlogger.blogthirdsubsection.map((subBloggerItem, subSecondIndex) => (
-        <BlogThirdSubSection
-          key={subSecondIndex}
-          index={subSecondIndex}
-          subBlogger={subBloggerItem}
-          handleRemove={() => removeThirdSubSection(subSecondIndex)}
-        />
-      ))}
-
-      <button
-        type="button"
-        onClick={addThirdSubSection}
-        className="mt-4 inline-flex items-center px-4 py-2 text-white bg-gray-500 hover:bg-gray-400 rounded-md"
-      >
-        <FaPlus className="mr-2" />
-        Add Third Section
-      </button>
     </div>
   );
 };
