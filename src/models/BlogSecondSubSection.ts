@@ -20,7 +20,7 @@ const BlogSecondSubSectionSchema: Schema = new Schema({
         type: String,
       
     },
-    blogthirdsubsection: [{ type: Schema.Types.ObjectId, ref: 'BlogThirdSubSection' }], 
+   
 },{ timestamps: true });
 
 

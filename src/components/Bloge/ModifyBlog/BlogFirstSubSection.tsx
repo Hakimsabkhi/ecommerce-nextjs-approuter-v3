@@ -7,13 +7,15 @@ import BlogSecondSubSection from './BlogSecondSubSection';
 interface Blogger {
   title: string;
   description: string;
+  imageUrl:string;
   image: File | null;
-  subBloggers: SubBlogger[];
+  blogsecondsubsection: blogsecondsubsection[];
 }
 
-interface SubBlogger {
+interface blogsecondsubsection {
   title: string;
   description: string;
+  imageUrl:string;
   image: File | null;
 }
 
@@ -79,9 +81,10 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   // Function to add a BlogSecondSubSection (SubBlogger)
   const addSecondSubSection = () => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index].subBloggers.push({
+    updatedBloggers[index].blogsecondsubsection.push({
       title: '',
       description: '',
+      imageUrl:'',
       image: null,
     });
     setBloggers(updatedBloggers);
@@ -90,7 +93,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   // Function to remove a BlogSecondSubSection
   const removeSecondSubSection = (subIndex: number) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index].subBloggers.splice(subIndex, 1);
+    updatedBloggers[index].blogsecondsubsection.splice(subIndex, 1);
     setBloggers(updatedBloggers);
   };
 
@@ -108,7 +111,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
     value: string
   ) => {
     const updatedBloggers = [...bloggers];
-    updatedBloggers[index].subBloggers[subIndex][field] = value;
+    updatedBloggers[index].blogsecondsubsection[subIndex][field] = value;
     setBloggers(updatedBloggers);
   };
 
@@ -165,7 +168,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
           <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
           Upload Image
         </label>
-        {blogger.image && (
+        {blogger.image?.type? (
           <div className="mt-2">
             <Image
               width={100}
@@ -174,12 +177,22 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
               alt="Blogger Image Preview"
               className="max-w-full h-auto rounded"
             />
+          </div>):(
+            <div className="mt-2">
+            <Image
+              width={100}
+              height={100}
+              src={blogger.imageUrl}
+              alt="Blogger Image Preview"
+              className={`${blogger.imageUrl ? "max-w-full h-auto rounded" : "hidden"}`}
+            />
           </div>
-        )}
+          )
+        }
       </div>
 
       {/* Dynamically render BlogSecondSubSection */}
-      {blogger.subBloggers.map((subBlogger, subIndex) => (
+     {blogger.blogsecondsubsection.map((subBlogger, subIndex) => (
   <BlogSecondSubSection
   key={subIndex}
   firstindex={index}
@@ -190,8 +203,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   handleSubBloggerImageChange={handleSubBloggerImageChange}
   errors={errors}
 />
-))}
-
+))} 
       {/* Button to add new Second SubSection */}
       <button
         type="button"

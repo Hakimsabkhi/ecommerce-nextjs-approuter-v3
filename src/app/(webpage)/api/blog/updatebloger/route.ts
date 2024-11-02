@@ -2,13 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import stream from "stream";
 import BlogMainSection from "@/models/BlogMainSection";
-import BlogFirstSubSection from "@/models/BlogFirstSubSection";
+import BlogFirstSubSection, { IBlogFirstSubSection } from "@/models/BlogFirstSubSection";
 import BlogSecondSubSection from "@/models/BlogSecondSubSection"; // Use singular for consistency
 import connectToDatabase from "@/lib/db";
 import { getToken } from "next-auth/jwt";
 import User from "@/models/User";
-
-export async function POST(req: NextRequest) {
+const extractPublicId = (url: string): string => {
+  const matches = url.match(/\/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/);
+  if (matches) {
+    return matches[1];
+  }
+  const segments = url.split("/");
+  const lastSegment = segments.pop();
+  return lastSegment ? lastSegment.split(".")[0] : "";
+};
+export async function PUT(req: NextRequest) {
     try {
         await connectToDatabase();
         const token=await getToken({req,secret:process.env.NEXTAUTH_SECRET});
@@ -24,19 +32,88 @@ export async function POST(req: NextRequest) {
           if (!user || user.role !== 'Admin' && user.role !== 'Consulter'&& user.role !== 'SuperAdmin') {
             return NextResponse.json({ error: 'Forbidden: Access is denied' }, { status: 404 });
           }
+
+   
+   
         const formData = await req.formData();
- 
-    const blogTitle = formData.get("blogTitle") as string;
+        const id= formData.get("id")as string;
+        
+
+     const blogTitle = formData.get("blogTitle") as string;
         const blogDescription = formData.get("blogDescription") as string;
         const blogImage = formData.get("blogImage") as File | null; // Use File instead of Blob
         const bloggerCount = formData.get("bloggerCount") as string;
         const blogCategory = formData.get("blogCategory");
 
-     
+        const existingBlog = await BlogMainSection.findById(id)
+        .populate({
+          path: 'blogfirstsubsection',
+          populate: {
+            path: 'blogsecondsubsection'
+          }
+        })
+        .exec();
+  
+      if (!existingBlog) {
+        console.log('Blog not found');
+        return;
+      }
+       // Process blogfirstsubsection
+       if (Array.isArray(existingBlog.blogfirstsubsection)) {
+        for (const firstSub of existingBlog.blogfirstsubsection) {
+            const blogFirst: IBlogFirstSubSection = firstSub as IBlogFirstSubSection;
 
+            // Remove images for blogsecondsubsection
+            if (blogFirst.blogsecondsubsection) {
+                const blogSecondSubs = await BlogSecondSubSection.find({ _id: { $in: blogFirst.blogsecondsubsection } });
+                for (const secondSub of blogSecondSubs) {
+                    if (secondSub.imageUrl) {
+                        const publicId = extractPublicId(secondSub.imageUrl);
+                       
+                        if (publicId) {
+                          await cloudinary.uploader.destroy(`blog/bloggers/subbloggers/${publicId}`);
+                         
+                        }
+                    
+                        
+                    }
+                }
+                
+                // Delete blogsecondsubsection
+                await BlogSecondSubSection.deleteMany({ _id: { $in: blogFirst.blogsecondsubsection } });
+            }
+
+            // Remove images for blogfirstsubsection
+            if (blogFirst.imageUrl) {
+                const publicId = extractPublicId(blogFirst.imageUrl);
+                if (publicId) {
+                  await cloudinary.uploader.destroy(`blog/bloggers/${publicId}`);
+                }
+            
+               
+                
+            }
+        }
+
+        // Delete blogfirstsubsection
+        await BlogFirstSubSection.deleteMany({ _id: { $in: existingBlog.blogfirstsubsection.map(sub => (sub as IBlogFirstSubSection)._id) } });
+    }
+      
+  
+   
+
+   if (blogImage) {  
+    if (existingBlog.imageUrl) {
+      const publicId = extractPublicId(existingBlog.imageUrl);
+  if (publicId) {
+    await cloudinary.uploader.destroy(`blog/${publicId}`);
+      }
+    }
+   }
         // Upload the main blog image if it exists
         let blogImageUrl = '';
         if (blogImage) {
+         
             const imageBuffer = await blogImage.arrayBuffer();
             const bufferStream = new stream.PassThrough();
             bufferStream.end(Buffer.from(imageBuffer));
@@ -131,21 +208,25 @@ export async function POST(req: NextRequest) {
         }
 
         // Create and save the blog
-        const newBlog = new BlogMainSection({
-            title: blogTitle,
-            description: blogDescription || '', // Default to an empty string if description is null
-            imageUrl: blogImageUrl || '', // Default to an empty string if no image was uploaded
-            blogfirstsubsection: bloggersIds,
-            blogCategory:blogCategory,
-            user,
-        });
+        existingBlog.title = blogTitle;
+    existingBlog.description = blogDescription || ''; // Default to an empty string if description is null
+    if(blogImageUrl){
+    existingBlog.imageUrl = blogImageUrl || ''; // Default to an empty string if no image was uploaded
+    }
+    existingBlog.blogfirstsubsection = bloggersIds;
+    if(blogImageUrl){
+    existingBlog.blogCategory = blogCategory as string;
+    }
+    existingBlog.user = user;
 
-        await newBlog.save(); 
+    await existingBlog.save();
+
+       
 
         return NextResponse.json(
             {
                 message: "Blog created successfully",
-            blog: newBlog,
+          /*   blog: newBlog, */
             },
             { status: 200 }
         );

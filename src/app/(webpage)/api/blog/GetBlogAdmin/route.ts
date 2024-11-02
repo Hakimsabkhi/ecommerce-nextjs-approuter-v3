@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import  BlogMainSection from '@/models/BlogMainSection';
 import User from '@/models/User';
+import BlogCategory from '@/models/BlogCategory';
 import { getToken } from 'next-auth/jwt';
 async function getUserFromToken(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -25,9 +26,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
     await User.find({})
-  
+    await BlogCategory.find({})
     // Fetch all Blogs 
-    const Blogs = await BlogMainSection.find({}).populate('user','_id username email role').exec(); 
+    const Blogs = await BlogMainSection.find({}).populate('blogCategory').populate('user','_id username email role').exec(); 
     // Return the fetched Blogs 
     return NextResponse.json(Blogs, { status: 200 });
   } catch (error) {

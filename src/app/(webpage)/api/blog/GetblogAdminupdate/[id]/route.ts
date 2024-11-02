@@ -26,11 +26,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     await BlogCategory.find();
     await BlogSecondSubSection.find();
     await BlogFirstSubSection.find().populate('blogsecondsubsection')
-  console.log(slugblog)
+
     // Fetch the blog with the given slug
-    const blog = await BlogMainSection.findOne({ slug: slugblog, vadmin: "approve" })
+    const blog = await BlogMainSection.findById(slugblog)
     .populate('blogCategory')
-    .populate('user','_id username')
     .populate({
       path: 'blogfirstsubsection',
       populate: {

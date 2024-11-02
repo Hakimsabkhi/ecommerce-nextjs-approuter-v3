@@ -12,9 +12,9 @@ import DeletePopup from "@/components/Popup/DeletePopup";
 type Category = {
   _id: string;
   name: string;
-  imageUrl: string;
-  logoUrl: string;
   user:user;
+  vadmin:string;
+  slug:string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -89,6 +89,35 @@ const AddedCategories: React.FC = () => {
       setLoading(false);
     }
   };
+  
+  
+  const updateBlogCategoryStatus = async (blogId: string, newStatus: string) => {
+    try {
+      const updateFormData = new FormData();
+      updateFormData.append("vadmin", newStatus);
+
+      const response = await fetch(`/api/blog/Category/updateBlogCategoryStatus/${blogId}`, {
+        method: "PUT",
+        body: updateFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      
+      setAddedCategory((prevData) =>
+        prevData.map((item) =>
+          item._id === blogId ? { ...item, vadmin: newStatus } : item
+        )
+      );
+ 
+      const data = await response.json();
+      console.log("Blog status updated successfully:", data);
+    } catch (error) {
+      console.error("Failed to update blog status:", error);
+      toast.error("Failed to update blog status");
+    }
+  };
 
   useEffect(() => {
     getCategory();
@@ -128,12 +157,18 @@ const AddedCategories: React.FC = () => {
     <div className="mx-auto w-[90%] py-8 flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold">ALL categories</p>
-
-        <Link href="category/addcategory" className="w-[15%]">
-          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg w-full h-10">
+        <div className="grid grid-cols-2">
+        <Link href="/admin/bloglist" >
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  pl-10 pr-10  h-10">
+            Back
+          </button>
+          </Link>
+        <Link href="category/addcategory" >
+          <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  h-10  pl-10 pr-10">
             Add a new category
           </button>
         </Link>
+        </div>
       </div>
       <input
         type="text"
@@ -160,6 +195,27 @@ const AddedCategories: React.FC = () => {
               <td>
                
                 <div className="flex items-center justify-center gap-2">
+                <select
+                    className={`w-50 text-black rounded-md p-2 ${
+                      item.vadmin === "not-approve"
+                        ? "bg-gray-400 text-white"
+                        : "bg-green-500 text-white"
+                    }`}
+                    value={item.vadmin}
+                    onChange={(e) =>
+                      updateBlogCategoryStatus(item._id, e.target.value)
+                    }
+                  >
+                    <option value="approve" className="text-white uppercase">
+                      Approve
+                    </option>
+                    <option
+                      value="not-approve"
+                      className="text-white uppercase"
+                    >
+                      Not approve
+                    </option>
+                  </select>
                   <Link href={`/admin/bloglist/category/${item._id}`}>
                     <button className="bg-gray-800 text-white w-28 h-10  hover:bg-gray-600 rounded-md">
                       Modify

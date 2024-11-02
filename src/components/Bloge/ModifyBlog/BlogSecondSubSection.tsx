@@ -5,6 +5,7 @@ import { MdClose } from 'react-icons/md';
 interface SubBlogger {
   title: string;
   description: string;
+  imageUrl:string;
   image: File | null;
 }
 
@@ -81,7 +82,7 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
         <input type="file" onChange={(e) => handleSubBloggerImageChange(firstindex,index, e)} accept="image/*" className="sr-only" />
           Upload Image
         </label>
-        {subBlogger.image && (
+        {subBlogger.image?.type?  (
           <div className="flex justify-center">
             <Image
               width={100}
@@ -90,8 +91,18 @@ const BlogSecondSubSection: React.FC<BlogSecondSubSectionProps> = ({
               alt="Sub-Blogger Image Preview"
               className="mt-2 w-fit h-80 rounded-md"
             />
+          </div>):(
+            <div className="mt-2">
+            <Image
+              width={100}
+              height={100}
+              src={subBlogger.imageUrl}
+              alt="Blogger Image Preview"
+              className={`${subBlogger.imageUrl ? "max-w-full h-auto rounded" : "hidden"}`}
+            />
           </div>
-        )}
+          )}
+      
       </div>
     </div>
   );
