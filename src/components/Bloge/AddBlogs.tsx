@@ -191,6 +191,7 @@ const AddBlogs = () => {
   
   return (
     <div className="container mx-auto mt-4 border-2 p-4 rounded">
+            <h1 className="flex justify-center text-3xl font-bold uppercase">Add Blog</h1>
       <div className="">
         <h2 className="text-2xl font-semibold text-gray-800">Main Blog Section</h2>
         <form onSubmit={handleSubmit}>
@@ -234,6 +235,14 @@ const AddBlogs = () => {
           >
             Add First Section
           </button>
+         <div className="flex justify-end ">
+          <button
+            type="button"
+            onClick={()=>route.push("/admin/bloglist")}
+            className="inline-flex items-center px-4 py-2 text-white bg-gray-500 hover:bg-gray-400 rounded-md mt-4"
+          >
+            Cancel
+          </button>
 
           <button
             type="submit"
@@ -241,6 +250,7 @@ const AddBlogs = () => {
           >
             Submit
           </button>
+          </div>
         </form>
       </div>
     </div>

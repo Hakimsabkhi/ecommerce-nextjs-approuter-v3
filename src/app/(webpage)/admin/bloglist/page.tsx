@@ -49,7 +49,7 @@ const AddedBlog: React.FC = () => {
 
   const deleteBlog = async (blogId: string) => {
     try {
-      const response = await fetch(`/api/blog/deleteBlog/${blogId}`, {
+      const response = await fetch(`/api/blog/DeleteBlog/${blogId}`, {
         method: "DELETE",
       });
 
@@ -190,8 +190,8 @@ const AddedBlog: React.FC = () => {
                <td className="border px-4 py-2">{blog.title}</td>
                <td className="border px-4 py-2">{blog.blogCategory?.name}</td>
                             <td className="border px-4 py-2">
-                <Link href={blog.imageUrl}>
-                  {blog.imageUrl.split("/").pop()}
+                <Link href={blog.imageUrl}className="flex justify-center" >
+                 <Image src={blog.imageUrl} alt={blog.title} width={30} height={30} />
                 </Link>
               </td>
              
