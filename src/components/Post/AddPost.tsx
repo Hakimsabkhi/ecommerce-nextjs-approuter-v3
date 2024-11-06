@@ -159,7 +159,7 @@ const AddBlogs = () => {
     formData.append("bloggerCount", bloggers.length.toString());
     
     try {
-      const response = await fetch("/api/blog/PostBlog", {
+      const response = await fetch("/api/blog/addPost", {
         method: "POST",
         body: formData,
       });

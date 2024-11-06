@@ -31,7 +31,7 @@ interface blogsecondsubsection {
 }
 const fetchBlogData = async (id: string): Promise<blog> => {
   
-      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/GetBlogBySlugB/${id}`, {
+      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/PostBySlugAdmin/${id}`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",

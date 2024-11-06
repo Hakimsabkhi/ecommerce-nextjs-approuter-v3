@@ -17,7 +17,7 @@ interface blog {
 
 
   const fetchBlogData = async (id: string): Promise<blog[]> => {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/GetBlogBySlugCategoryF/${id}`, {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/PostBySlugCategoryCustomer/${id}`, {
         method: 'GET',
        
         next: { revalidate: 0 },

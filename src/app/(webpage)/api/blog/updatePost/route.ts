@@ -7,6 +7,7 @@ import BlogSecondSubSection from "@/models/PostSections/PostSecondSubSectionMode
 import connectToDatabase from "@/lib/db";
 import { getToken } from "next-auth/jwt";
 import User from "@/models/User";
+import uploadeImage from "@/lib/uploadeImage";
 const extractPublicId = (url: string): string => {
   const matches = url.match(/\/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/);
   if (matches) {
@@ -114,21 +115,12 @@ export async function PUT(req: NextRequest) {
         let blogImageUrl = '';
         if (blogImage) {
          
-            const imageBuffer = await blogImage.arrayBuffer();
-            const bufferStream = new stream.PassThrough();
-            bufferStream.end(Buffer.from(imageBuffer));
-
-            const result = await new Promise<any>((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    { folder: 'blog', format: 'webp' },
-                    (error, result) => {
-                        if (error) return reject(error);
-                        resolve(result);
-                    }
-                );
-                bufferStream.pipe(uploadStream);
-            });
-            blogImageUrl = result.secure_url;
+            try {
+                blogImageUrl = await uploadeImage("blog", blogImage);
+              } catch (error) {
+                console.error("Error uploading blog image:", error);
+                // Optionally, you can handle the error or set a fallback URL.
+              }
         }
 
         const bloggersIds: string[] = [];
@@ -139,21 +131,13 @@ export async function PUT(req: NextRequest) {
             
             let bloggerImageUrl = '';
             if (bloggerImage) {
-                const imageBuffer = await bloggerImage.arrayBuffer();
-                const bufferStream = new stream.PassThrough();
-                bufferStream.end(Buffer.from(imageBuffer));
-
-                const result = await new Promise<any>((resolve, reject) => {
-                    const uploadStream = cloudinary.uploader.upload_stream(
-                        { folder: 'blog/bloggers', format: 'webp' },
-                        (error, result) => {
-                            if (error) return reject(error);
-                            resolve(result);
-                        }
-                    );
-                    bufferStream.pipe(uploadStream);
-                });
-                bloggerImageUrl = result.secure_url;
+                try {
+                    bloggerImageUrl = await uploadeImage("blog/bloggers", bloggerImage);
+                  } catch (error) {
+                    console.error("Error uploading blog image:", error);
+                    // Optionally, you can handle the error or set a fallback URL.
+                  }
+                
             }
 
             // Create Blogger
@@ -174,21 +158,13 @@ export async function PUT(req: NextRequest) {
 
                 let subBloggerImageUrl = '';
                 if (subImage) {
-                    const subImageBuffer = await subImage.arrayBuffer();
-                    const bufferStream = new stream.PassThrough();
-                    bufferStream.end(Buffer.from(subImageBuffer));
-
-                    const result = await new Promise<any>((resolve, reject) => {
-                        const uploadStream = cloudinary.uploader.upload_stream(
-                            { folder: 'blog/bloggers/subbloggers', format: 'webp' },
-                            (error, result) => {
-                                if (error) return reject(error);
-                                resolve(result);
-                            }
-                        );
-                        bufferStream.pipe(uploadStream);
-                    });
-                    subBloggerImageUrl = result.secure_url;
+                    try {
+                        subBloggerImageUrl = await uploadeImage("blog/bloggers/subbloggers", subImage);
+                      } catch (error) {
+                        console.error("Error uploading blog image:", error);
+                        // Optionally, you can handle the error or set a fallback URL.
+                      }
+                    
                 }
 
                 // Create and save sub-blogger

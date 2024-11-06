@@ -49,7 +49,7 @@ const BlogTable: React.FC = () => {
 
   const deleteBlog = async (blogId: string) => {
     try {
-      const response = await fetch(`/api/blog/DeleteBlog/${blogId}`, {
+      const response = await fetch(`/api/blog/DeletePost/${blogId}`, {
         method: "DELETE",
       });
 
@@ -74,7 +74,7 @@ const BlogTable: React.FC = () => {
       const updateFormData = new FormData();
       updateFormData.append("vadmin", newStatus);
 
-      const response = await fetch(`/api/blog/updateBlogStatus/${blogId}`, {
+      const response = await fetch(`/api/blog/updatePostStatus/${blogId}`, {
         method: "PUT",
         body: updateFormData,
       });
@@ -100,7 +100,7 @@ const BlogTable: React.FC = () => {
   useEffect(() => {
     const getBlogs = async () => {
       try {
-        const response = await fetch("/api/blog/GetBlogAdmin", {
+        const response = await fetch("/api/blog/PostList", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

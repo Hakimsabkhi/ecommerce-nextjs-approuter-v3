@@ -48,7 +48,7 @@ const AddBlogs = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/blog/Category/getAllCategory");
+        const response = await fetch("/api/blog/PostCategory/getAllCategory");
         if (!response.ok) throw new Error("Failed to fetch categories");
         const data = await response.json();
         setCategories(data);
@@ -58,7 +58,7 @@ const AddBlogs = () => {
     };
     const fetchBlogData = async () => {
       try {
-        const response = await fetch(`/api/blog/GetblogAdminupdate/${params.id}`);
+        const response = await fetch(`/api/blog/PostIdForUpdate/${params.id}`);
         if (!response.ok) throw new Error('Failed to fetch blog data');
         const data = await response.json();
         // Populate state with fetched data
@@ -182,7 +182,7 @@ const AddBlogs = () => {
     formData.append("bloggerCount", bloggers.length.toString());
     
     try {
-      const response = await fetch("/api/blog/updatebloger", {
+      const response = await fetch("/api/blog/updatePost", {
         method: "PUT",
         body: formData,
       });

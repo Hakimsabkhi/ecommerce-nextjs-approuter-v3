@@ -53,7 +53,7 @@ export async function PUT(
       if (vadmin !== undefined && vadmin !== null) {
         existingBLOG.vadmin = vadmin;
       }
-  console.log(vadmin)
+
   
       
       await existingBLOG.save();
