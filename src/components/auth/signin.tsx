@@ -55,7 +55,7 @@ const SignIn = () => {
       });
   
       if (result?.ok) {
-        router.push('/');
+        router.push('/admin/dashboard');
       } else {
         setError('Failed to sign in. Please check your email and password and try again.');
       }

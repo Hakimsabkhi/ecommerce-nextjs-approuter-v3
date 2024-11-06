@@ -42,7 +42,7 @@ const AddBlogs = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/blog/Category/getAllCategory");
+        const response = await fetch("/api/blog/PostCategory/getAllCategory");
         if (!response.ok) throw new Error("Failed to fetch categories");
         const data = await response.json();
         setCategories(data);
@@ -172,7 +172,7 @@ const AddBlogs = () => {
       console.log("Success:", result);
       // Handle success (e.g., show a notification, clear form, etc.)
       // Optionally reset form state or redirect here
-      route.push("/admin/bloglist/")
+      route.push("/admin/blog/")
     } catch (error) {
       toast.error('title blog exists')
       console.error("Error:", error);

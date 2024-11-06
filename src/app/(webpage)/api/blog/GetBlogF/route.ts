@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  BlogMainSection from '@/models/BlogMainSection';
+import  BlogMainSection from '@/models/PostSections/PostMainSectionModel';
 
 
 export async function GET(req: NextRequest) {

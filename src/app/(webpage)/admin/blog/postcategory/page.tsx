@@ -48,7 +48,7 @@ const AddedCategories: React.FC = () => {
   const DeleteCategory = async (categoryId: string) => {
     try {
       const response = await fetch(
-        `/api/blog/Category/deleteCategory/${categoryId}`,
+        `/api/blog/PostCategory/deleteCategory/${categoryId}`,
         {
           method: "DELETE",
         }
@@ -74,7 +74,7 @@ const AddedCategories: React.FC = () => {
 
   const getCategory = async () => {
     try {
-      const response = await fetch("/api/blog/Category/getAllCategory");
+      const response = await fetch("/api/blog/PostCategory/getAllCategory");
 
       if (!response.ok) {
         throw new Error("Failed to fetch categories");
@@ -96,7 +96,7 @@ const AddedCategories: React.FC = () => {
       const updateFormData = new FormData();
       updateFormData.append("vadmin", newStatus);
 
-      const response = await fetch(`/api/blog/Category/updateBlogCategoryStatus/${blogId}`, {
+      const response = await fetch(`/api/blog/PostCategory/updateBlogCategoryStatus/${blogId}`, {
         method: "PUT",
         body: updateFormData,
       });
