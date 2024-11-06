@@ -22,7 +22,7 @@ interface Blogger {
   blogsecondsubsection: SubBlogger[];
 }
 
-const AddBlogs = () => {
+const ModifyPost = () => {
   const params = useParams() as { id: string };
   const [blogTitle, setBlogTitle] = useState("");
   const [blogDescription, setBlogDescription] = useState("");
@@ -280,4 +280,4 @@ const AddBlogs = () => {
   );
 };
 
-export default AddBlogs;
+export default ModifyPost;

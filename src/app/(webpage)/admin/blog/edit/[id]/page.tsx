@@ -1,10 +1,10 @@
-import ModifyBlog from '@/components/Post/ModifyPost'
+import ModifyPost from '@/components/Post/ModifyPost'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <ModifyBlog/>
+      <ModifyPost/>
     </div>
   )
 }
