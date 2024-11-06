@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import BlogMainSection from '@/models/BlogMainSection';
-import BlogFirstSubSection from '@/models/BlogFirstSubSection';
-import BlogSecondSubSection from '@/models/BlogSecondSubSection';
+import BlogMainSection from '@/models/PostSections/PostMainSectionModel';
+import BlogFirstSubSection from '@/models/PostSections/PostFirstSubSectionModel';
+import BlogSecondSubSection from '@/models/PostSections/PostSecondSubSectionModel';
 import User from '@/models/User';
-import BlogCategory from '@/models/BlogCategory';
+import BlogCategory from '@/models/PostSections/BlogCategory';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {

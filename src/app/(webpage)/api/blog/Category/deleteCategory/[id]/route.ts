@@ -1,8 +1,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
-import Category from "@/models/BlogCategory";
-import BlogMainSection from "@/models/BlogMainSection";
+import Category from "@/models/PostSections/BlogCategory";
+import BlogMainSection from "@/models/PostSections/PostMainSectionModel";
 
 import User from "@/models/User";
 import { getToken } from "next-auth/jwt";

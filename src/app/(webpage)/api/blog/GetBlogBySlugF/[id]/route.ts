@@ -4,7 +4,7 @@ import BlogMainSection from '@/models/BlogMainSection';
 import BlogFirstSubSection from '@/models/BlogFirstSubSection';
 import BlogSecondSubSection from '@/models/BlogSecondSubSection';
 import User from '@/models/User';
-import BlogCategory from '@/models/BlogCategory';
+import BlogCategory from '@/models/PostSections/BlogCategory';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {

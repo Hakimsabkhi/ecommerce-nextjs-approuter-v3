@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import BlogCategory from "@/models/BlogCategory";
+import BlogCategory from "@/models/PostSections/BlogCategory";
 import BlogMainSection from "@/models/BlogMainSection";
 
 export async function GET(

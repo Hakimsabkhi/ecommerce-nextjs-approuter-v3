@@ -1,5 +1,5 @@
 
-import Blog from '@/components/fblog/Blog';
+import Blog from '@/components/fPost/Post';
 import Blogbanner from '@/components/blogbanner';
 import React from 'react';
 interface blog {

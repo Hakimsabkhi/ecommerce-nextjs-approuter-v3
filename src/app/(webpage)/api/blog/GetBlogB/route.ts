@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  BlogMainSection from '@/models/BlogMainSection';
-import BlogCategory from '@/models/BlogCategory';
+import  BlogMainSection from '@/models/PostSections/PostMainSectionModel';
+import BlogCategory from '@/models/PostSections/BlogCategory';
 
 
 

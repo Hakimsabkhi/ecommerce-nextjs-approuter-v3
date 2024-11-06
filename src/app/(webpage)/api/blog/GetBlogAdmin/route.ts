@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
-import  BlogMainSection from '@/models/BlogMainSection';
+import  BlogMainSection from '@/models/PostSections/PostMainSectionModel';
 import User from '@/models/User';
-import BlogCategory from '@/models/BlogCategory';
+import BlogCategory from '@/models/PostSections/BlogCategory';
 import { getToken } from 'next-auth/jwt';
 async function getUserFromToken(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });

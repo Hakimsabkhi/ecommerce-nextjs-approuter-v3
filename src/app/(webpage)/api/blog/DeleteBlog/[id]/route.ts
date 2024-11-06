@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
 
-import BlogMainSection from "@/models/BlogMainSection";
+import BlogMainSection from "@/models/PostSections/PostMainSectionModel";
 import User from "@/models/User";
 import { getToken } from "next-auth/jwt";
 import cloudinary from "@/lib/cloudinary";
-import BlogFirstSubSection, { IBlogFirstSubSection } from "@/models/BlogFirstSubSection";
-import BlogSecondSubSection from "@/models/BlogSecondSubSection";
+import BlogFirstSubSection, { IBlogFirstSubSection } from "@/models/PostSections/PostFirstSubSectionModel";
+import BlogSecondSubSection from "@/models/PostSections/PostSecondSubSectionModel";
 
 const extractPublicId = (url: string): string => {
     const matches = url.match(/\/([^\/]+)\.(jpg|jpeg|png|gif|webp)$/);
