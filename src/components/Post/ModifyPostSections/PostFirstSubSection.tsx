@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { FaUpload, FaPlus } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
-import BlogSecondSubSection from './BlogSecondSubSection';
+import BlogSecondSubSection from './PostSecondSubSection';
 
 interface Blogger {
   title: string;
@@ -138,7 +138,6 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
           className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
             errors[`blogger${index}Title`] ? 'border-red-500' : ''
           }`}
-          placeholder="Enter blogger title"
           aria-describedby={`blogger${index}TitleError`}
         />
         {errors[`blogger${index}Title`] && (

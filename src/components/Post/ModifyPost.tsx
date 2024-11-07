@@ -2,8 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import BlogMainSection from "./ModifyPostSections/BlogMainSection";
-import BlogFirstSubSection from "./ModifyPostSections/BlogFirstSubSection";
+import BlogMainSection from "./ModifyPostSections/PostMainSection";
+import BlogFirstSubSection from "./ModifyPostSections/PostFirstSubSection";
 import { toast } from "react-toastify";
 
 interface SubBlogger {
