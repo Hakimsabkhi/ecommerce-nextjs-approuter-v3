@@ -145,11 +145,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
     
   };
 
-  useEffect(() => {
-    if (blogger.imageUrl) {
-      injectImageFromUrl(blogger.imageUrl,index);
-    }
-  }, [blogger.imageUrl,index]);
+  
 
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
@@ -225,7 +221,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
           )
         }
       </div>
-
+      
       {/* Dynamically render BlogSecondSubSection */}
      {blogger.blogsecondsubsection.map((subBlogger, subIndex) => (
   <BlogSecondSubSection
@@ -239,7 +235,11 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   errors={errors}
 />
 ))} 
-      {/* Button to add new Second SubSection */}
+ <div className='flex justify-start pt-2'>
+      <button type='button'  
+        className='mt-4  px-4 py-2 mr-2 text-white bg-green-800 hover:bg-gray-400 rounded-md'
+        onClick={()=>injectImageFromUrl(blogger.imageUrl,index)}>Check exist image </button>
+             {/* Button to add new Second SubSection */}
       <button
         type="button"
         onClick={addSecondSubSection}
@@ -248,6 +248,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
         <FaPlus className="mr-2" />
         Add Second Section
       </button>
+    </div>
     </div>
   );
 };
