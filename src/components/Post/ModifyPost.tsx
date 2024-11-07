@@ -85,6 +85,7 @@ const ModifyPost = () => {
   };
 
   const handleImageChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.files)
     const file = event.target.files?.[0] || null;
     if (file) {
       const updatedBloggers = [...bloggers];
@@ -135,7 +136,7 @@ const ModifyPost = () => {
     formData.append("blogDescription", blogDescription);
     formData.append("blogCategory", category);
     if (blogImage) formData.append("blogImage", blogImage);
-  
+
     bloggers.forEach((blogger, index) => {
       // Append blogger's title
       formData.append(`bloggers[${index}][title]`, blogger.title);
@@ -149,6 +150,7 @@ const ModifyPost = () => {
       // Append blogger's image if it exists
       if (blogger.image) {
         formData.append(`bloggers[${index}][image]`, blogger.image);
+        console.log( blogger.image)
       }
     
       // Append the number of sub-bloggers
@@ -195,7 +197,7 @@ const ModifyPost = () => {
       console.log("Success:", result);
       // Handle success (e.g., show a notification, clear form, etc.)
       // Optionally reset form state or redirect here
-      route.push("/admin/bloglist/")
+      route.push("/admin/blog")
     } catch (error) {
       toast.error('title blog exists')
       console.error("Error:", error);
@@ -262,7 +264,7 @@ const ModifyPost = () => {
           <div className="flex justify-end ">
           <button
             type="button"
-            onClick={()=>route.push("/admin/bloglist")}
+            onClick={()=>route.push("/admin/blog")}
             className="inline-flex items-center px-4 py-2 text-white bg-gray-500 hover:bg-gray-400 rounded-md mt-4"
           >
             Cancel

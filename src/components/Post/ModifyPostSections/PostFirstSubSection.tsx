@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaUpload, FaPlus } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
 import BlogSecondSubSection from './PostSecondSubSection';
@@ -77,6 +77,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
   handleSubBloggerImageChange,
   errors,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Function to add a BlogSecondSubSection (SubBlogger)
   const addSecondSubSection = () => {
@@ -114,6 +115,41 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
     updatedBloggers[index].blogsecondsubsection[subIndex][field] = value;
     setBloggers(updatedBloggers);
   };
+ 
+  const injectImageFromUrl = async (imageUrl: string,index:number) => {
+    try {
+      if (!fileInputRef.current) {
+        console.warn("File input reference is null.");
+        return;
+      }
+
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "image.webp", { type: blob.type , lastModified: Date.now(),});
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInputRef.current.files = dataTransfer.files;
+      console.log(dataTransfer.files)
+      const syntheticEvent = {
+        target: {
+          files: fileInputRef.current.files
+        } as EventTarget & HTMLInputElement,
+      } as React.ChangeEvent<HTMLInputElement>;
+      
+     
+      handleImageChange(index, syntheticEvent);
+     
+    } catch (error) {
+      console.error("Failed to inject image from URL:", error);
+    }
+    
+  };
+
+  useEffect(() => {
+    if (blogger.imageUrl) {
+      injectImageFromUrl(blogger.imageUrl,index);
+    }
+  }, [blogger.imageUrl,index]);
 
   return (
     <div className="relative mt-4 border-2 p-4 rounded">
@@ -163,7 +199,7 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
         <label className="block text-sm font-medium text-gray-700">Blogger Image</label>
         
         <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-        <input type="file" onChange={(e) => handleImageChange(index, e)} className="sr-only" />
+        <input type="file" ref={fileInputRef}  onChange={(e) => handleImageChange(index, e)} className="sr-only" />
           <FaUpload className="mr-2 h-5 w-5 text-gray-400" />
           Upload Image
         </label>
@@ -178,13 +214,13 @@ const BlogFirstSubSection: React.FC<BlogFirstSubSectionProps> = ({
             />
           </div>):(
             <div className="mt-2">
-            <Image
+             {/* <Image
               width={100}
               height={100}
               src={blogger.imageUrl}
               alt="Blogger Image Preview"
               className={`${blogger.imageUrl ? "max-w-full h-auto rounded" : "hidden"}`}
-            />
+            />  */}
           </div>
           )
         }
