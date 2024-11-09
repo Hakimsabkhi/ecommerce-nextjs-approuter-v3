@@ -101,7 +101,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
-
+ 
   const handleSubtitleImageChange = (
     e: ChangeEvent<HTMLInputElement>,
     subtitleIndex: number
@@ -357,6 +357,10 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       />
        {/* Main Title Image */}
        <div className="space-y-2 mb-4">
+       <label className="block text-sm font-medium text-gray-700">
+          Main Title Image
+        </label>
+    
        {previewUrl && (
           <Image
             src={previewUrl}
@@ -375,9 +379,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
             className="object-cover rounded-md w-[100%] h-40"
           />
         )}
-        <label className="block text-sm font-medium text-gray-700">
-          Main Title Image
-        </label>
+        
         <input type="file" accept="image/*" onChange={handleImageChange} />
      
       </div>
@@ -421,7 +423,11 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                 placeholder={`Subtitle ${subtitleIndex + 1}`}
               />
               
-              
+              <label
+            htmlFor={`sub image ${subtitleIndex + 1}`}
+            className="block text-sm font-medium text-gray-700"
+          > {`sub image ${subtitleIndex + 1}`}{" "}
+          </label>
             {subtitle.imageUrl && (
             <Image
               src={subtitle.imageUrl}
@@ -431,11 +437,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
               className="rounded-md w-[100%] h-40"
             />
           )}
-            <label
-            htmlFor={`sub image ${subtitleIndex + 1}`}
-            className="block text-sm font-medium text-gray-700"
-          > {`sub image ${subtitleIndex + 1}`}{" "}
-          </label>
+           
           <input
             type="file"
             accept="image/*"
@@ -502,7 +504,17 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                   >
                     {`Sub Title subimage ${subtitleIndex + 1}`}{" "}
                   </label>
-                  <input
+                 
+                  {subsubtitle.imageUrl && (
+                    <Image
+                      src={subsubtitle.imageUrl}
+                      alt="Subtitlesubtitle Image"
+                      width={500}
+                      height={500}
+                      className="rounded-md w-[100%] h-40"
+                    />
+                  )}
+                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
@@ -513,15 +525,6 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                       )
                     }
                   />
-                  {subsubtitle.imageUrl && (
-                    <Image
-                      src={subsubtitle.imageUrl}
-                      alt="Subtitlesubtitle Image"
-                      width={500}
-                      height={500}
-                      className="rounded-md w-[100%] h-40"
-                    />
-                  )}
                   <label
                     htmlFor={`Sub Title subdescription ${subtitleIndex + 1}`}
                     className="block text-sm font-medium text-gray-700"

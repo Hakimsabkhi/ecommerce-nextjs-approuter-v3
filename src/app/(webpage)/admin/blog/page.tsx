@@ -191,7 +191,7 @@ const BlogTable: React.FC = () => {
                <td className="border px-4 py-2">{blog.blogCategory?.name}</td>
                             <td className="border px-4 py-2">
                 <Link href={blog.imageUrl}className="flex justify-center" >
-                 <Image src={blog.imageUrl} alt={blog.title} width={30} height={30} />
+                 <Image src={blog.imageUrl} alt={blog.title} width={200} height={200} />
                 </Link>
               </td>
              

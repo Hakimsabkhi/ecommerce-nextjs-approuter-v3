@@ -6,6 +6,7 @@ import PostMainSectionModel from '@/models/PostSections/PostMainSectionModel';
 import { getToken } from 'next-auth/jwt';
 import User from '@/models/User';
 import BlogCategory from '@/models/PostSections/BlogCategory';
+import Post from '@/models/Post';
 
 async function getUserFromToken(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -41,12 +42,18 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   await connectToDatabase();
   const { id } = params;
   const updatedData = await request.json();
-
+ 
   try {
+    const user = await getUserFromToken(request);
+    if ('error' in user) {
+      return NextResponse.json({ error: user.error }, { status: user.status });
+    }
+    await PostMainSectionModel.findByIdAndUpdate(id,user)
+   
     const result = await PostMainSectionModel.findByIdAndUpdate(id, updatedData, {
       new: true,
     });
