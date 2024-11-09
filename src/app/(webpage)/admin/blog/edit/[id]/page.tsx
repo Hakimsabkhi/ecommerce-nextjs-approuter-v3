@@ -1,12 +1,594 @@
-import ModifyPost from '@/components/Post/ModifyPost'
-import React from 'react'
+"use client";
 
-const page = () => {
-  return (
-    <div>
-      <ModifyPost/>
-    </div>
-  )
+import { useEffect, useState, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { FaRegCircleXmark } from "react-icons/fa6";
+
+interface Postsecondsubsection {
+  secondtitle: string;
+  description: string;
+  imageUrl?: string;
+  imageFile?: File; // Temporary property to store the selected file before upload
 }
 
-export default page
+interface Postfirstsubsection {
+  fisttitle: string;
+  description: string;
+  Postsecondsubsections: Postsecondsubsection[];
+  imageUrl?: string;
+  imageFile?: File; // Temporary property to store the selected file before upload
+}
+
+interface PostMainSection {
+  title: string;
+  description: string;
+  Postfirstsubsections: Postfirstsubsection[];
+  blogCategory: blogCategory;
+  imageUrl?: string;
+}
+interface blogCategory {
+  _id: string;
+  name: string;
+}
+
+export default function UpdatePost({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const [postData, setpostData] = useState<PostMainSection | null>(null);
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [listPostCategorie, setListPostCategorie] = useState<
+    { _id: string; name: string }[]
+  >([]);
+  const { id } = params;
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/blog/PostCategory/getAllCategory");
+        if (!response.ok) throw new Error("Failed to fetch categories");
+        const data = await response.json();
+        setListPostCategorie(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    const fetchTitle = async () => {
+      const response = await fetch(`/api/blog/ListPostadmin/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setpostData(data);
+      }
+    };
+
+    fetchCategories();
+    fetchTitle();
+  }, [id]);
+
+  const handleInputChangecategory = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    if (postData) {
+      setpostData({
+        ...postData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (postData) {
+      setpostData({
+        ...postData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+  const handleInputChanget = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (postData) {
+      setpostData({
+        ...postData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubtitleImageChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    subtitleIndex: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (postData && file) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].imageFile = file;
+      updatedSubtitles[subtitleIndex].imageUrl = URL.createObjectURL(file);
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+
+  const handleSubtitlesubtitleImageChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    subtitleIndex: number,
+    subsubtitleIndex: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (postData && file) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[
+        subsubtitleIndex
+      ].imageFile = file;
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[
+        subsubtitleIndex
+      ].imageUrl = URL.createObjectURL(file);
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+
+  const handleSubtitleChange = (index: number, value: string) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[index].fisttitle = value;
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+  const handleSubdescriptionChange = (index: number, value: string) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[index].description = value;
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+  const handleSubtitlesubtitleChange = (
+    subtitleIndex: number,
+    subsubtitleIndex: number,
+    value: string
+  ) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[
+        subsubtitleIndex
+      ].secondtitle = value;
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+  const handleSubtitlesubdescriptionChange = (
+    subtitleIndex: number,
+    subsubtitleIndex: number,
+    value: string
+  ) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[
+        subsubtitleIndex
+      ].description = value;
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+  const addSubtitle = () => {
+    if (postData) {
+      setpostData({
+        ...postData,
+        Postfirstsubsections: [
+          ...postData.Postfirstsubsections,
+          {
+            fisttitle: "",
+            description: "",
+            Postsecondsubsections: [],
+            imageUrl: "",
+          },
+        ],
+      });
+    }
+  };
+
+  const addSubtitlesubtitle = (subtitleIndex: number) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].Postsecondsubsections.push({
+        secondtitle: "",
+        description: "",
+        imageUrl: "",
+      });
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+
+  const deleteSubtitle = (subtitleIndex: number) => {
+    if (postData) {
+      const updatedSubtitles = postData.Postfirstsubsections.filter(
+        (_, index) => index !== subtitleIndex
+      );
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+
+  const deleteSubtitlesubtitle = (
+    subtitleIndex: number,
+    subsubtitleIndex: number
+  ) => {
+    if (postData) {
+      const updatedSubtitles = [...postData.Postfirstsubsections];
+      updatedSubtitles[subtitleIndex].Postsecondsubsections = updatedSubtitles[
+        subtitleIndex
+      ].Postsecondsubsections.filter((_, index) => index !== subsubtitleIndex);
+      setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+    }
+  };
+
+  const handleSaveUpdate = async () => {
+    if (postData) {
+      // Step 1: Delete old main image if a new one is uploaded
+      if (newImage && postData.imageUrl) {
+        await fetch(`/api/deleteImage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: postData.imageUrl }),
+        });
+      }
+
+      // Step 2: Upload main image if selected
+      let uploadedImageUrl = postData.imageUrl || "";
+      if (newImage) {
+        const formData = new FormData();
+        formData.append("file", newImage);
+        const uploadResponse = await fetch(`/api/uploadImage`, {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadResponse.json();
+        uploadedImageUrl = uploadData.url;
+      }
+
+      // Step 3: Handle subtitle and subtitlesubtitle images
+      const updatedSubtitles = await Promise.all(
+        postData.Postfirstsubsections.map(async (subtitle) => {
+          let subtitleImageUrl = subtitle.imageUrl;
+          if (subtitle.imageFile) {
+            const formData = new FormData();
+            formData.append("file", subtitle.imageFile);
+            const response = await fetch("/api/uploadImage", {
+              method: "POST",
+              body: formData,
+            });
+            const data = await response.json();
+            subtitleImageUrl = data.url;
+          }
+
+          const updatedSubtitlesubtitles = await Promise.all(
+            subtitle.Postsecondsubsections.map(async (subsubtitle) => {
+              let subsubtitleImageUrl = subsubtitle.imageUrl;
+              if (subsubtitle.imageFile) {
+                const formData = new FormData();
+                formData.append("file", subsubtitle.imageFile);
+                const response = await fetch("/api/uploadImage", {
+                  method: "POST",
+                  body: formData,
+                });
+                const data = await response.json();
+                subsubtitleImageUrl = data.url;
+              }
+              return {
+                secondtitle: subsubtitle.secondtitle,
+                description: subsubtitle.description,
+                imageUrl: subsubtitleImageUrl,
+              };
+            })
+          );
+
+          return {
+            fisttitle: subtitle.fisttitle,
+            description: subtitle.description,
+            imageUrl: subtitleImageUrl,
+            subtitlesubtitles: updatedSubtitlesubtitles,
+          };
+        })
+      );
+
+      // Step 4: Update the title with new data
+      const response = await fetch(`/api/blog/ListPostadmin/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...postData,
+          imageUrl: uploadedImageUrl,
+          subtitles: updatedSubtitles,
+        }),
+      });
+
+      if (response.ok) {
+        router.push("/admin/blog");
+      }
+    }
+  };
+
+  if (!postData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 bg-gray-50">
+      <h1 className="flex text-4xl font-bold uppercase pb-3 justify-center">
+        Update Title
+      </h1>
+      <div className="mb-4">
+        <label
+          htmlFor="Category"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Post Category{" "}
+        </label>
+        <select
+          name="blogCategory"
+          onChange={handleInputChangecategory}
+          value={postData.blogCategory?._id}
+          className={`mt-1 block py-2.5 pl-2 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 `}
+          required
+        >
+          <option value="">Select a category</option>
+          {listPostCategorie.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <label
+        htmlFor="Main Title"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Main Title{" "}
+      </label>
+      <input
+        type="text"
+        name="title"
+        value={postData.title}
+        onChange={handleInputChange}
+        className="w-full p-2 border border-gray-300 rounded-md mb-4"
+        placeholder="Main Title"
+      />
+       {/* Main Title Image */}
+       <div className="space-y-2 mb-4">
+       {previewUrl && (
+          <Image
+            src={previewUrl}
+            alt="New Image Preview"
+            width={500}
+            height={500}
+            className="object-cover rounded-md w-[100%] h-40"
+          />
+        )}
+        {postData.imageUrl && !previewUrl && (
+          <Image
+            src={postData.imageUrl}
+            alt="Current Image"
+            width={500}
+            height={500}
+            className="object-cover rounded-md w-[100%] h-40"
+          />
+        )}
+        <label className="block text-sm font-medium text-gray-700">
+          Main Title Image
+        </label>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+     
+      </div>
+      <label
+        htmlFor="Main description"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Main description{" "}
+      </label>
+      <textarea
+        name="description"
+        value={postData.description}
+        onChange={handleInputChanget}
+        className="w-full p-2 border border-gray-300 rounded-md mb-4"
+        placeholder="Main Title"
+      />
+
+     
+
+      {/* Subtitles and Subtitlesubtitles */}
+      {postData.Postfirstsubsections.map((subtitle, subtitleIndex) => (
+        <div
+          key={subtitleIndex}
+          className="border p-4 rounded-md mb-4 bg-gray-50"
+        >
+          <div className="flex items-center space-x-2">
+            <div className="flex flex-col gap-4 w-[100%]">
+              <label
+                htmlFor={`Subtitle ${subtitleIndex + 1}`}
+                className="block text-sm font-medium text-gray-700"
+              >
+                {`Subtitle ${subtitleIndex + 1}`}{" "}
+              </label>
+              <input
+                type="text"
+                value={subtitle.fisttitle}
+                onChange={(e) =>
+                  handleSubtitleChange(subtitleIndex, e.target.value)
+                }
+                className="w-full border  p-2 border-gray-300 rounded-md "
+                placeholder={`Subtitle ${subtitleIndex + 1}`}
+              />
+              
+              
+            {subtitle.imageUrl && (
+            <Image
+              src={subtitle.imageUrl}
+              alt="Subtitle Image"
+              width={500}
+              height={500}
+              className="rounded-md w-[100%] h-40"
+            />
+          )}
+            <label
+            htmlFor={`sub image ${subtitleIndex + 1}`}
+            className="block text-sm font-medium text-gray-700"
+          > {`sub image ${subtitleIndex + 1}`}{" "}
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleSubtitleImageChange(e, subtitleIndex)}
+          />
+          
+
+              <label
+                htmlFor={`sub description ${subtitleIndex + 1}`}
+                className="block text-sm font-medium text-gray-700"
+              >
+                {`sub description ${subtitleIndex + 1}`}{" "}
+              </label>
+              
+              <textarea
+                value={subtitle.description}
+                onChange={(e) =>
+                  handleSubdescriptionChange(subtitleIndex, e.target.value)
+                }
+                className="w-full  border border-gray-300 rounded-md mb-3 "
+                placeholder={`Subtitle ${subtitleIndex + 1}`}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => deleteSubtitle(subtitleIndex)}
+              className="text-red-500 hover:text-red-700 font-semibold"
+            >
+              <FaRegCircleXmark />
+            </button>
+          </div>
+         
+          {/* Subtitlesubtitles */}
+          {subtitle.Postsecondsubsections.map(
+            (subsubtitle, subsubtitleIndex) => (
+              <div
+                key={subsubtitleIndex}
+                className="border p-4 rounded-md space-y-2 bg-gray-50"
+              >
+                <div className='flex space-x-2 items-center justify-between' >
+                <div className="flex flex-col gap-4 w-[100%]">
+                  <label
+                    htmlFor={`Sub Title subtitle ${subtitleIndex + 1}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    {`Sub Title subtitle ${subtitleIndex + 1}`}{" "}
+                  </label>
+                  <input
+                    type="text"
+                    value={subsubtitle.secondtitle}
+                    onChange={(e) =>
+                      handleSubtitlesubtitleChange(
+                        subtitleIndex,
+                        subsubtitleIndex,
+                        e.target.value
+                      )
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    placeholder={`Subtitlesubtitle ${subsubtitleIndex + 1}`}
+                  />
+                  <label
+                    htmlFor={`Sub Title subimage ${subtitleIndex + 1}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    {`Sub Title subimage ${subtitleIndex + 1}`}{" "}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleSubtitlesubtitleImageChange(
+                        e,
+                        subtitleIndex,
+                        subsubtitleIndex
+                      )
+                    }
+                  />
+                  {subsubtitle.imageUrl && (
+                    <Image
+                      src={subsubtitle.imageUrl}
+                      alt="Subtitlesubtitle Image"
+                      width={500}
+                      height={500}
+                      className="rounded-md w-[100%] h-40"
+                    />
+                  )}
+                  <label
+                    htmlFor={`Sub Title subdescription ${subtitleIndex + 1}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    {`Sub Title subdescription ${subtitleIndex + 1}`}{" "}
+                  </label>
+                  <textarea
+                    value={subsubtitle.description}
+                    onChange={(e) =>
+                      handleSubtitlesubdescriptionChange(
+                        subtitleIndex,
+                        subsubtitleIndex,
+                        e.target.value
+                      )
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    placeholder={`Subtitlesubdescription ${
+                      subsubtitleIndex + 1
+                    }`}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    deleteSubtitlesubtitle(subtitleIndex, subsubtitleIndex)
+                  }
+                  className="text-red-500 hover:text-red-700 font-semibold"
+                >
+                  <FaRegCircleXmark />
+                </button>
+                </div>
+              </div>
+            )
+          )}
+
+          <button
+            type="button"
+            onClick={() => addSubtitlesubtitle(subtitleIndex)}
+            className="mt-2 text-gray-400 hover:text-gray-700 font-semibold"
+          >
+            Add Subtitlesubtitle
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={addSubtitle}
+        className="w-full p-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 font-semibold"
+      >
+        Add Subtitle
+      </button>
+
+      <div className="flex justify-between">
+      <button
+        onClick={() => router.push("/admin/blog")}
+        className="px-4 py-2 bg-gray-600 hover:bg-gray-400 text-white rounded-md mt-4"
+      >
+        Cancel
+      </button>
+      <button
+        onClick={handleSaveUpdate}
+        className="px-4 py-2 bg-gray-800 hover:bg-gray-600 text-white rounded-md mt-4"
+      >
+        Save Changes
+      </button>
+      </div>
+    </div>
+  );
+}

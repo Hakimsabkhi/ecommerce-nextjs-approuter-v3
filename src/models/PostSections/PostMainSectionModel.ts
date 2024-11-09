@@ -1,15 +1,25 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IBlogFirstSubSection } from './PostFirstSubSectionModel';
 import { IUser } from '../User';
 import {IBlogCategory} from './BlogCategory'
-export interface IBlogMainSection extends Document {
+export interface Postsecondsubsection {
+    secondtitle: string;
+    description:string;
+    imageUrl?: string; // Image URL for subtitlesubtitle
+  }
+export interface Postfirstsubsection {
+    fisttitle: string;
+    description:string;
+    Postsecondsubsections: Postsecondsubsection[];
+    imageUrl?: string; // Image URL for subtitle
+  }
+export interface IPostMainSection extends Document {
     title: string;
     description: string;
     imageUrl: string;
     vadmin:string;
     blogCategory: IBlogCategory | string; 
     user: IUser | string; 
-    blogfirstsubsection: IBlogFirstSubSection[] | string[]; // Reference to bloggers
+    Postfirstsubsections: Postfirstsubsection[]; // Reference to bloggers
 }
 // Helper function to slugify category names
 const slugifyBlogName = (title: string): string => {
@@ -18,12 +28,25 @@ const slugifyBlogName = (title: string): string => {
       .replace(/ /g, '-')
       .replace(/[^\w-]+/g, ''); // Remove any special characters
   };
+  const PostsecondsubsectionSchema = new Schema<Postsecondsubsection>({
+    secondtitle: { type: String, required: true },
+    description:{type:String,required: false},
+    imageUrl: { type: String, required: false }, // Optional field for the image URL
+  });
 
-const BlogMainSectionSchema = new mongoose.Schema({
+  const PostfirstsubsectionSchema = new Schema<Postfirstsubsection>({
+    fisttitle: { type: String, required: true },
+    description:{type:String,required: false},
+    Postsecondsubsections: { type: [PostsecondsubsectionSchema], required: false, default: [] },
+    imageUrl: { type: String, required: false }, // Optional field for the image URL
+  });
+
+const PostMainSectionSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
         unique: true,
+        index:true
     },
     description: {
         type: String,
@@ -34,7 +57,7 @@ const BlogMainSectionSchema = new mongoose.Schema({
         required: true,
     },
     slug: { type: String, unique: true },
-    blogfirstsubsection: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogFirstSubSection' }], // Change this to an array
+    Postfirstsubsections: {type: [PostfirstsubsectionSchema], required: false, default: [] }, // Change this to an array
     vadmin:{ type: String,default:'not-approve'},
     blogCategory:{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogCategory' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -43,7 +66,7 @@ const BlogMainSectionSchema = new mongoose.Schema({
         default: Date.now, // Automatically set the creation date
     },
 });
-BlogMainSectionSchema.pre('save', function (next) {
+PostMainSectionSchema.pre('save', function (next) {
     if (this.isModified('title')) {
       this.slug = slugifyBlogName(this.title);
     }
@@ -51,6 +74,6 @@ BlogMainSectionSchema.pre('save', function (next) {
   });
 
 // Export the model
-const BlogMainSection: Model<IBlogMainSection> = mongoose.models.BlogMainSection || mongoose.model<IBlogMainSection>('BlogMainSection', BlogMainSectionSchema);
+const PostMainSection: Model<IPostMainSection> = mongoose.models.PostMainSection || mongoose.model<IPostMainSection>('PostMainSection', PostMainSectionSchema);
 
-export default BlogMainSection;
+export default PostMainSection;

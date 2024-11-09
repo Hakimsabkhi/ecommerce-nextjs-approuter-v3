@@ -8,7 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import DeletePopup from "@/components/Popup/DeletePopup";
 import Pagination from "@/components/Pagination";
 
-type Blog = {
+type Postmain = {
   _id: string;
   title: string;
   description: string;
@@ -27,24 +27,24 @@ slug:string;
 }
 
 const BlogTable: React.FC = () => {
-  const [addedBlogs, setAddedBlogs] = useState<Blog[]>([]);
+  const [postlist, setpostlist] = useState<Postmain[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
-  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [selectedPost, setselectedPost] = useState<Postmain | null>(null);
 
   const blogsPerPage = 5;
 
-  const handleDeleteClick = (blog: Blog) => {
-    setSelectedBlog(blog);
+  const handleDeleteClick = (blog: Postmain) => {
+    setselectedPost(blog);
     setIsPopupOpen(true);
   };
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
-    setSelectedBlog(null);
+    setselectedPost(null);
   };
 
   const deleteBlog = async (blogId: string) => {
@@ -57,7 +57,7 @@ const BlogTable: React.FC = () => {
         throw new Error("Failed to delete blog");
       }
 
-      setAddedBlogs((prevBlogs) =>
+      setpostlist((prevBlogs) =>
         prevBlogs.filter((blog) => blog._id !== blogId)
       );
 
@@ -83,7 +83,7 @@ const BlogTable: React.FC = () => {
         throw new Error(`Error: ${response.statusText}`);
       }
       
-      setAddedBlogs((prevData) =>
+      setpostlist((prevData) =>
         prevData.map((item) =>
           item._id === blogId ? { ...item, vadmin: newStatus } : item
         )
@@ -100,7 +100,7 @@ const BlogTable: React.FC = () => {
   useEffect(() => {
     const getBlogs = async () => {
       try {
-        const response = await fetch("/api/blog/PostList", {
+        const response = await fetch("/api/blog/ListPostadmin", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +112,7 @@ const BlogTable: React.FC = () => {
 
         const data = await response.json();
         console.log(data)
-        setAddedBlogs(data);
+        setpostlist(data);
       } catch (err: any) {
         setError(`[Blog_GET] ${err.message}`);
       } finally {
@@ -123,10 +123,10 @@ const BlogTable: React.FC = () => {
   }, []);
 
   const filteredBlogs = useMemo(() => {
-    return addedBlogs.filter((blog) =>
+    return postlist.filter((blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, addedBlogs]);
+  }, [searchTerm, postlist]);
 
   const currentBlogs = useMemo(() => {
     const indexOfLastBlog = currentPage * blogsPerPage;
@@ -229,12 +229,12 @@ const BlogTable: React.FC = () => {
                   <button
                     onClick={() => handleDeleteClick(blog)}
                     className="bg-gray-800 text-white w-28 h-10 hover:bg-gray-600 rounded-md"
-                    disabled={selectedBlog?._id === blog._id}
+                    disabled={selectedPost?._id === blog._id}
                   >
-                    {selectedBlog?._id === blog._id ? "Processing..." : "DELETE"}
+                    {selectedPost?._id === blog._id ? "Processing..." : "DELETE"}
                   </button>
 
-                  <Link
+              {blog.blogCategory && <Link
                     href={`/${blog.vadmin === "approve" ? "" : "admin/"}blog/${blog.blogCategory.slug}/${
                       blog.slug
                     }`}
@@ -242,7 +242,7 @@ const BlogTable: React.FC = () => {
                     <button className="bg-gray-800 text-white w-36 h-10 hover:bg-gray-600 rounded-md uppercase">
                       See Blog
                     </button>
-                  </Link>
+                  </Link> }
                 </div>
               </td>
             </tr>
@@ -256,12 +256,12 @@ const BlogTable: React.FC = () => {
           onPageChange={setCurrentPage}
         />
       </div>
-      {isPopupOpen && selectedBlog && (
+      {isPopupOpen && selectedPost && (
         <DeletePopup
           handleClosePopup={handleClosePopup}
           Delete={deleteBlog}
-          id={selectedBlog._id}
-          name={selectedBlog.title}
+          id={selectedPost._id}
+          name={selectedPost.title}
         />
       )}
     </div>
