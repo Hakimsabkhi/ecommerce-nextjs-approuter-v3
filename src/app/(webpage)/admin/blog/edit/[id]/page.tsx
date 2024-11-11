@@ -41,7 +41,22 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
     { _id: string; name: string }[]
   >([]);
   const { id } = params;
-
+ // Handle image removal for subtitle images
+ const handleImageRemoval = (subtitleIndex: number, subsubtitleIndex?: number) => {
+  if (postData) {
+    const updatedSubtitles = [...postData.Postfirstsubsections];
+    
+    if (subsubtitleIndex !== undefined) {
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageUrl = "";
+      updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageFile = undefined;
+    } else {
+      updatedSubtitles[subtitleIndex].imageUrl = "";
+      updatedSubtitles[subtitleIndex].imageFile = undefined;
+    }
+    
+    setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
+  }
+};
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -371,6 +386,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           />
         )}
         {postData.imageUrl && !previewUrl && (
+        
           <Image
             src={postData.imageUrl}
             alt="Current Image"
@@ -378,6 +394,8 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
             height={500}
             className="object-cover rounded-md w-[100%] h-40"
           />
+        
+      
         )}
         
         <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -403,7 +421,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       {postData.Postfirstsubsections.map((subtitle, subtitleIndex) => (
         <div
           key={subtitleIndex}
-          className="border p-4 rounded-md mb-4 bg-gray-50"
+          className="border p-4 rounded-md mb-4 bg-gray-50 relative"
         >
           <div className="flex items-center space-x-2">
             <div className="flex flex-col gap-4 w-[100%]">
@@ -429,13 +447,20 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           > {`sub image ${subtitleIndex + 1}`}{" "}
           </label>
             {subtitle.imageUrl && (
-            <Image
+           <div className="relative"> <Image
               src={subtitle.imageUrl}
               alt="Subtitle Image"
               width={500}
               height={500}
-              className="rounded-md w-[100%] h-40"
+              className="rounded-md w-[100%] h-40 "
             />
+           <button 
+                    type='button' 
+                    onClick={() =>  handleImageRemoval(subtitleIndex)} 
+                    className='absolute top-1 left-1 py-1 px-2 text-xs bg-red-500 text-white rounded-full'
+                  >
+                    &times;
+                  </button></div>
           )}
            
           <input
@@ -464,7 +489,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
             <button
               type="button"
               onClick={() => deleteSubtitle(subtitleIndex)}
-              className="text-red-500 hover:text-red-700 font-semibold"
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700 font-semibold"
             >
               <FaRegCircleXmark />
             </button>
@@ -475,7 +500,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
             (subsubtitle, subsubtitleIndex) => (
               <div
                 key={subsubtitleIndex}
-                className="border p-4 rounded-md space-y-2 bg-gray-50"
+                className="border p-4 rounded-md space-y-2 bg-gray-50 relative "
               >
                 <div className='flex space-x-2 items-center justify-between' >
                 <div className="flex flex-col gap-4 w-[100%]">
@@ -505,14 +530,22 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                     {`Sub Title subimage ${subtitleIndex + 1}`}{" "}
                   </label>
                  
-                  {subsubtitle.imageUrl && (
-                    <Image
+                  {subsubtitle?.imageUrl && (
+                   <div className="relative"> <Image
                       src={subsubtitle.imageUrl}
                       alt="Subtitlesubtitle Image"
                       width={500}
                       height={500}
                       className="rounded-md w-[100%] h-40"
                     />
+                    <button 
+                    type='button' 
+                    onClick={() => handleImageRemoval(subtitleIndex,subsubtitleIndex)}
+                    className='absolute top-1 left-1 py-1 px-2 text-xs bg-red-500 text-white rounded-full'
+                  >
+                    &times;
+                  </button></div>
+                    
                   )}
                    <input
                     type="file"
@@ -551,7 +584,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                   onClick={() =>
                     deleteSubtitlesubtitle(subtitleIndex, subsubtitleIndex)
                   }
-                  className="text-red-500 hover:text-red-700 font-semibold"
+                  className="text-red-500 hover:text-red-700 font-semibold absolute top-2 right-2"
                 >
                   <FaRegCircleXmark />
                 </button>
