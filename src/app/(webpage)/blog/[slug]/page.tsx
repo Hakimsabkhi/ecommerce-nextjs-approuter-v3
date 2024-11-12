@@ -30,8 +30,8 @@ interface blog {
     return data;
 };
 
-export default async function Page({ params }: { params: { slugblogcategory: string } }) {
-  const id = params.slugblogcategory;
+export default async function Page({ params }: { params: { slug: string } }) {
+  const id = params.slug;
       const blog = await fetchBlogData(id);
 
     // Pass the blog data as an array
