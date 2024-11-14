@@ -66,23 +66,24 @@ const toRoman = (num: number): string => {
 
   return roman;
 };
-
+const removedImageUrls: string[] = [];
 export default function UpdatePost({ params }: { params: { id: string } }) {
   const router = useRouter();
+
   const [postData, setpostData] = useState<PostMainSection | null>(null);
   const [newImage, setNewImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [listPostCategorie, setListPostCategorie] = useState<
     { _id: string; name: string }[]
   >([]);
-  const [removedImageUrl, setRemovedImageUrl] = useState<string[]>([]);
+  
 
   const { id } = params;
  // Handle image removal for subtitle images
  const handleImageRemoval = (subtitleIndex: number, subsubtitleIndex?: number) => {
   if (postData) {
     const updatedSubtitles = [...postData.Postfirstsubsections];
-    let removedImageUrls: string[] = []; 
+ 
     let imageUrlToRemove: string | undefined;
     if (subsubtitleIndex !== undefined) {
       imageUrlToRemove = updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageUrl;
@@ -101,7 +102,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       updatedSubtitles[subtitleIndex].imageUrl = "";
       updatedSubtitles[subtitleIndex].imageFile = undefined;
     }
-    setRemovedImageUrl(removedImageUrls)
+  
     setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
   }
 };
@@ -267,6 +268,21 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
 
   const deleteSubtitle = (subtitleIndex: number) => {
     if (postData) {
+      const Subtitles = [...postData.Postfirstsubsections];
+      const imageUrl = Subtitles[subtitleIndex].imageUrl;
+      if (imageUrl) {
+        removedImageUrls.push(imageUrl);
+       
+      }
+      if (Subtitles[subtitleIndex].Postsecondsubsections.length>0){
+        for (let i = 0; i < removedImageUrls.length; i++) {
+          const imageUrlsecon=Subtitles[subtitleIndex].Postsecondsubsections[i].imageUrl;
+          if(imageUrlsecon){
+        
+          removedImageUrls.push(imageUrlsecon);
+        }
+        }
+      }
       const updatedSubtitles = postData.Postfirstsubsections.filter(
         (_, index) => index !== subtitleIndex
       );
@@ -278,22 +294,33 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
     subtitleIndex: number,
     subsubtitleIndex: number
   ) => {
+    
     if (postData) {
       const updatedSubtitles = [...postData.Postfirstsubsections];
+      const imageUrl = updatedSubtitles[subtitleIndex]?.Postsecondsubsections[subsubtitleIndex]?.imageUrl;
+    if (imageUrl) {
+      removedImageUrls.push(imageUrl);
+     
+    }
+
       updatedSubtitles[subtitleIndex].Postsecondsubsections = updatedSubtitles[
         subtitleIndex
       ].Postsecondsubsections.filter((_, index) => index !== subsubtitleIndex);
+      
+
+    
       setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
     }
   };
 
   const handleSaveUpdate = async () => {
-    if (removedImageUrl.length>0)
+    
+    if (removedImageUrls.length>0)
       {
 
-        for (let i = 0; i < removedImageUrl.length; i++) {
+        for (let i = 0; i < removedImageUrls.length; i++) {
         
-          const imageUrl = removedImageUrl[i]; // Get the current image URL
+          const imageUrl = removedImageUrls[i]; // Get the current image URL
 
           try {
             // Perform the API request to delete the image
@@ -311,7 +338,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           }
         }
       }
-    
+      removedImageUrls.length = 0;
     if (postData) {
       // Step 1: Delete old main image if a new one is uploaded
  
@@ -385,7 +412,8 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
         })
       );
    
-      console.log("up",updatedSubtitles);
+    
+
       // Step 4: Update the title with new data
       const response = await fetch(`/api/blog/ListPostadmin/${id}`, {
         method: "PUT",
