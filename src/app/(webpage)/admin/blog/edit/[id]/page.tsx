@@ -129,7 +129,13 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
     fetchCategories();
     fetchTitle();
   }, [id]);
+const handleback=()=>{
+  console.log('stage1',removedImageUrls)
+  removedImageUrls.length=0;
+  console.log('stage2',removedImageUrls)
 
+ router.push("/admin/blog");
+}
   const handleInputChangecategory = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -719,7 +725,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
 
       <div className="flex justify-between">
       <button
-        onClick={() => router.push("/admin/blog")}
+        onClick={() => handleback()}
         className="px-4 py-2 bg-gray-600 hover:bg-gray-400 text-white rounded-md mt-4"
       >
         Cancel
