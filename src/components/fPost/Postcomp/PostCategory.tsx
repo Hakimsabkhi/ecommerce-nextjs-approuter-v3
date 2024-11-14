@@ -69,6 +69,8 @@ function PostCategory() {
   }
 
   return (
+    <div className='flex flex-col gap-4'>
+    <p className='text-4xl font-bold'>Read More...</p>
     <div className='flex  flex-col gap-2 '>
       {blogData.map((item, index) => (
         <div
@@ -122,6 +124,7 @@ function PostCategory() {
           </div>
         </div>
       ))} {/* Pass the blog data to the Blog component */}
+    </div>
     </div>
   );
 }

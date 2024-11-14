@@ -38,11 +38,9 @@ export default async function Blogright ()  {
            
         </div>))}
     </div>}
-    <div className='flex flex-col gap-4'>
-        <p className='text-4xl font-bold'>Side Widget</p>
+    
         <PostCategory/>
     </div>
-</div>
   )
 }
 

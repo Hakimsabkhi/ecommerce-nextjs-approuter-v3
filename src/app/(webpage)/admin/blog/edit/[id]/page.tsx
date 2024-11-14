@@ -31,6 +31,41 @@ interface blogCategory {
   _id: string;
   name: string;
 }
+const toRoman = (num: number): string => {
+  const romanNumerals: { [key: number]: string } = {
+    1: "I",
+    2: "II",
+    3: "III",
+    4: "IV",
+    5: "V",
+    6: "VI",
+    7: "VII",
+    8: "VIII",
+    9: "IX",
+    10: "X",
+    20: "XX",
+    30: "XXX",
+    40: "XL",
+    50: "L",
+    60: "LX",
+    70: "LXX",
+    80: "LXXX",
+    90: "XC",
+    100: "C",
+  };
+
+  let roman = "";
+  const digits = [100, 90, 50, 40, 10, 9, 5, 4, 1];
+
+  for (let i = 0; i < digits.length; i++) {
+    while (num >= digits[i]) {
+      roman += romanNumerals[digits[i]];
+      num -= digits[i];
+    }
+  }
+
+  return roman;
+};
 
 export default function UpdatePost({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -40,20 +75,33 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
   const [listPostCategorie, setListPostCategorie] = useState<
     { _id: string; name: string }[]
   >([]);
+  const [removedImageUrl, setRemovedImageUrl] = useState<string[]>([]);
+
   const { id } = params;
  // Handle image removal for subtitle images
  const handleImageRemoval = (subtitleIndex: number, subsubtitleIndex?: number) => {
   if (postData) {
     const updatedSubtitles = [...postData.Postfirstsubsections];
-    
+    let removedImageUrls: string[] = []; 
+    let imageUrlToRemove: string | undefined;
     if (subsubtitleIndex !== undefined) {
+      imageUrlToRemove = updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageUrl;
+      if (imageUrlToRemove) {
+        removedImageUrls.push(imageUrlToRemove); // Add the URL to the array
+      }
       updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageUrl = "";
       updatedSubtitles[subtitleIndex].Postsecondsubsections[subsubtitleIndex].imageFile = undefined;
     } else {
+      imageUrlToRemove = updatedSubtitles[subtitleIndex].imageUrl;
+      // Save the image URL to the array before removing
+      if (imageUrlToRemove) {
+        removedImageUrls.push(imageUrlToRemove); // Add the URL to the array
+      }
+     
       updatedSubtitles[subtitleIndex].imageUrl = "";
       updatedSubtitles[subtitleIndex].imageFile = undefined;
     }
-    
+    setRemovedImageUrl(removedImageUrls)
     setpostData({ ...postData, Postfirstsubsections: updatedSubtitles });
   }
 };
@@ -240,8 +288,33 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
   };
 
   const handleSaveUpdate = async () => {
+    if (removedImageUrl.length>0)
+      {
+
+        for (let i = 0; i < removedImageUrl.length; i++) {
+        
+          const imageUrl = removedImageUrl[i]; // Get the current image URL
+
+          try {
+            // Perform the API request to delete the image
+            await fetch(`/api/deleteImage`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ imageUrl }),
+            });
+      
+            // Optionally log success
+            console.log(`Image with URL: ${imageUrl} deleted successfully.`);
+          } catch (error) {
+            // Log any error that occurs during the fetch
+            console.error(`Error deleting image with URL: ${imageUrl}`, error);
+          }
+        }
+      }
+    
     if (postData) {
       // Step 1: Delete old main image if a new one is uploaded
+ 
       if (newImage && postData.imageUrl) {
         await fetch(`/api/deleteImage`, {
           method: "POST",
@@ -249,7 +322,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           body: JSON.stringify({ imageUrl: postData.imageUrl }),
         });
       }
-
+      
       // Step 2: Upload main image if selected
       let uploadedImageUrl = postData.imageUrl || "";
       if (newImage) {
@@ -267,6 +340,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       const updatedSubtitles = await Promise.all(
         postData.Postfirstsubsections.map(async (subtitle) => {
           let subtitleImageUrl = subtitle.imageUrl;
+         
           if (subtitle.imageFile) {
             const formData = new FormData();
             formData.append("file", subtitle.imageFile);
@@ -276,11 +350,14 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
             });
             const data = await response.json();
             subtitleImageUrl = data.url;
+ 
           }
-
+       
           const updatedSubtitlesubtitles = await Promise.all(
             subtitle.Postsecondsubsections.map(async (subsubtitle) => {
               let subsubtitleImageUrl = subsubtitle.imageUrl;
+            
+             
               if (subsubtitle.imageFile) {
                 const formData = new FormData();
                 formData.append("file", subsubtitle.imageFile);
@@ -298,16 +375,17 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
               };
             })
           );
-
+        
           return {
             fisttitle: subtitle.fisttitle,
             description: subtitle.description,
             imageUrl: subtitleImageUrl,
-            subtitlesubtitles: updatedSubtitlesubtitles,
+            Postsecondsubsections: updatedSubtitlesubtitles,
           };
         })
       );
-
+   
+      console.log("up",updatedSubtitles);
       // Step 4: Update the title with new data
       const response = await fetch(`/api/blog/ListPostadmin/${id}`, {
         method: "PUT",
@@ -315,7 +393,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
         body: JSON.stringify({
           ...postData,
           imageUrl: uploadedImageUrl,
-          subtitles: updatedSubtitles,
+          Postfirstsubsections: updatedSubtitles,
         }),
       });
 
@@ -420,16 +498,16 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       {/* Subtitles and Subtitlesubtitles */}
       {postData.Postfirstsubsections.map((subtitle, subtitleIndex) => (
         <div
-          key={subtitleIndex}
+          key={subtitleIndex+1}
           className="border p-4 rounded-md mb-4 bg-gray-50 relative"
         >
           <div className="flex items-center space-x-2">
             <div className="flex flex-col gap-4 w-[100%]">
               <label
-                htmlFor={`Subtitle ${subtitleIndex + 1}`}
+                htmlFor={`Subtitle ${toRoman(subtitleIndex + 1)}`}
                 className="block text-sm font-medium text-gray-700"
               >
-                {`Subtitle ${subtitleIndex + 1}`}{" "}
+                {`Subtitle ${toRoman(subtitleIndex + 1)}`}{" "}
               </label>
               <input
                 type="text"
@@ -438,13 +516,13 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                   handleSubtitleChange(subtitleIndex, e.target.value)
                 }
                 className="w-full border  p-2 border-gray-300 rounded-md "
-                placeholder={`Subtitle ${subtitleIndex + 1}`}
+                placeholder={`Subtitle ${toRoman(subtitleIndex + 1)}`}
               />
               
               <label
-            htmlFor={`sub image ${subtitleIndex + 1}`}
+            htmlFor={`sub image${toRoman(subtitleIndex + 1)}`}
             className="block text-sm font-medium text-gray-700"
-          > {`sub image ${subtitleIndex + 1}`}{" "}
+          > {`sub image ${toRoman(subtitleIndex + 1)}`}{" "}
           </label>
             {subtitle.imageUrl && (
            <div className="relative"> <Image
@@ -471,10 +549,10 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           
 
               <label
-                htmlFor={`sub description ${subtitleIndex + 1}`}
+                htmlFor={`sub description ${toRoman(subtitleIndex + 1)}`}
                 className="block text-sm font-medium text-gray-700"
               >
-                {`sub description ${subtitleIndex + 1}`}{" "}
+                {`sub description ${toRoman(subtitleIndex + 1)}`}{" "}
               </label>
               
               <textarea
@@ -483,7 +561,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                   handleSubdescriptionChange(subtitleIndex, e.target.value)
                 }
                 className="w-full  border border-gray-300 rounded-md mb-3 "
-                placeholder={`Subtitle ${subtitleIndex + 1}`}
+                placeholder={`Subtitle ${toRoman(subtitleIndex + 1)}`}
               />
             </div>
             <button
@@ -499,16 +577,16 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
           {subtitle.Postsecondsubsections.map(
             (subsubtitle, subsubtitleIndex) => (
               <div
-                key={subsubtitleIndex}
+                key={subsubtitleIndex+1}
                 className="border p-4 rounded-md space-y-2 bg-gray-50 relative "
               >
                 <div className='flex space-x-2 items-center justify-between' >
                 <div className="flex flex-col gap-4 w-[100%]">
                   <label
-                    htmlFor={`Sub Title subtitle ${subtitleIndex + 1}`}
+                    htmlFor={`Sub Title subtitle ${subsubtitleIndex + 1}`}
                     className="block text-sm font-medium text-gray-700"
                   >
-                    {`Sub Title subtitle ${subtitleIndex + 1}`}{" "}
+                    {`Sub Title subtitle ${subsubtitleIndex + 1}`}{" "}
                   </label>
                   <input
                     type="text"
@@ -524,10 +602,10 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                     placeholder={`Subtitlesubtitle ${subsubtitleIndex + 1}`}
                   />
                   <label
-                    htmlFor={`Sub Title subimage ${subtitleIndex + 1}`}
+                    htmlFor={`Sub Title subimage ${subsubtitleIndex + 1}`}
                     className="block text-sm font-medium text-gray-700"
                   >
-                    {`Sub Title subimage ${subtitleIndex + 1}`}{" "}
+                    {`Sub Title subimage ${subsubtitleIndex + 1}`}{" "}
                   </label>
                  
                   {subsubtitle?.imageUrl && (
@@ -559,10 +637,10 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
                     }
                   />
                   <label
-                    htmlFor={`Sub Title subdescription ${subtitleIndex + 1}`}
+                    htmlFor={`Sub Title subdescription ${subsubtitleIndex + 1}`}
                     className="block text-sm font-medium text-gray-700"
                   >
-                    {`Sub Title subdescription ${subtitleIndex + 1}`}{" "}
+                    {`Sub Title subdescription ${subsubtitleIndex + 1}`}{" "}
                   </label>
                   <textarea
                     value={subsubtitle.description}

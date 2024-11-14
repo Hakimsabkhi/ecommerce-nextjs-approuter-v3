@@ -46,14 +46,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   await connectToDatabase();
   const { id } = params;
   const updatedData = await request.json();
- 
+  console.log(updatedData)
+
   try {
     const user = await getUserFromToken(request);
     if ('error' in user) {
       return NextResponse.json({ error: user.error }, { status: user.status });
     }
     await PostMainSectionModel.findByIdAndUpdate(id,user)
-   
+
+
     const result = await PostMainSectionModel.findByIdAndUpdate(id, updatedData, {
       new: true,
     });

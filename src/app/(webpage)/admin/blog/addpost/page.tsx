@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import Image from 'next/image';
 import { FaRegCircleXmark } from 'react-icons/fa6';
+import { useRouter } from 'next/navigation';
 
 
 interface Postsecondsubsection {
@@ -31,6 +32,42 @@ interface blogCategory{
   _id:string;
   name:string;
 }
+const toRoman = (num: number): string => {
+  const romanNumerals: { [key: number]: string } = {
+    1: "I",
+    2: "II",
+    3: "III",
+    4: "IV",
+    5: "V",
+    6: "VI",
+    7: "VII",
+    8: "VIII",
+    9: "IX",
+    10: "X",
+    20: "XX",
+    30: "XXX",
+    40: "XL",
+    50: "L",
+    60: "LX",
+    70: "LXX",
+    80: "LXXX",
+    90: "XC",
+    100: "C",
+  };
+
+  let roman = "";
+  const digits = [100, 90, 50, 40, 10, 9, 5, 4, 1];
+
+  for (let i = 0; i < digits.length; i++) {
+    while (num >= digits[i]) {
+      roman += romanNumerals[digits[i]];
+      num -= digits[i];
+    }
+  }
+
+  return roman;
+};
+
 function AddPost() {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -38,7 +75,7 @@ function AddPost() {
   const [postfirstsubsections, setPostfirstsubsection] = useState<Postfirstsubsection[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [postMains, setPostMains] = useState<PostMainSection[]>([]);
+  const route=useRouter();
   const [listPostCategorie, setListPostCategorie] = useState<{ _id: string; name: string }[]>([]);
 
   useEffect(() => {
@@ -193,14 +230,9 @@ function AddPost() {
     });
   
     if (response.ok) {
-      const savedTitle = await response.json();
-      setPostMains([...postMains, savedTitle.data]);
-      setTitle('');
-      setDescription('');
-      setPostCategory('');
-      setPostfirstsubsection([]);
-      setImage(null);
-      setPreviewUrl(null);
+    route.push('/admin/blog')
+      
+
     } else {
       console.error("Failed to save the title data");
     }
@@ -268,12 +300,12 @@ function AddPost() {
             <div className="flex space-x-2 items-center justify-between">
               <div className=' flex flex-col gap-4 w-[100%]' >
               <label  htmlFor={`Subtitle ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`Subtitle ${subtitleIndex + 1}`} </label>
+                className="block text-sm font-medium text-gray-700">{`Subtitle ${toRoman(subtitleIndex + 1)}`} </label>
                 <input
                 type="text"
                 value={subtitleItem.fisttitle}
                 onChange={(e) => handleSubtitleChange(subtitleIndex, e.target.value)}
-                placeholder={`Subtitle ${subtitleIndex + 1}`}
+                placeholder={`Subtitle ${toRoman(subtitleIndex + 1)}`}
                 required
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -282,17 +314,17 @@ function AddPost() {
             {subtitleItem.imageUrl && (
               <Image src={subtitleItem.imageUrl} alt="Subtitle Image" width={500} height={500} className="rounded-md w-[100%] h-40" />
             )}
-            <label  htmlFor={`sub image ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`sub image ${subtitleIndex + 1}`} </label>
+            <label  htmlFor={`sub image  ${toRoman(subtitleIndex + 1)}`}
+                className="block text-sm font-medium text-gray-700">{`sub image  ${toRoman(subtitleIndex + 1)}`} </label>
             <input type="file" accept="image/*" onChange={(e) => handleSubtitleImageChange(e, subtitleIndex)}  className=''/>
            
-                   <label  htmlFor={`sub description ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`sub description ${subtitleIndex + 1}`} </label>
+                   <label  htmlFor={`sub description  ${toRoman(subtitleIndex + 1)}`}
+                className="block text-sm font-medium text-gray-700">{`sub description  ${toRoman(subtitleIndex + 1)}`} </label>
                  <textarea
                
                 value={subtitleItem.description}
                 onChange={(e) => handleSubdescriptionChange(subtitleIndex, e.target.value)}
-                placeholder={`sub description ${subtitleIndex + 1}`}
+                placeholder={`sub description ${toRoman(subtitleIndex + 1)}`}
                 required
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -312,8 +344,8 @@ function AddPost() {
               <div key={subsubtitleIndex} className="border p-4 rounded-md space-y-2 bg-gray-50">
                <div className='flex space-x-2 items-center justify-between' >
                 <div className=' flex flex-col gap-4 w-[100%]'>
-                <label  htmlFor={`Sub Title subtitle ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`Sub Title subtitle ${subtitleIndex + 1}`} </label>
+                <label  htmlFor={`Sub Title subtitle ${subsubtitleIndex + 1}`}
+                className="block text-sm font-medium text-gray-700">{`Sub Title subtitle ${subsubtitleIndex + 1}`} </label>
                 <input
                   type="text"
                   value={subsubtitle.secondtitle}
@@ -332,16 +364,16 @@ function AddPost() {
                     className="rounded-md w-[100%] h-40"
                   />
                 )}
-                    <label  htmlFor={`Sub Title subimage ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`Sub Title subimage ${subtitleIndex + 1}`} </label>
+                    <label  htmlFor={`Sub Title subimage ${subsubtitleIndex + 1}`}
+                className="block text-sm font-medium text-gray-700">{`Sub Title subimage ${subsubtitleIndex + 1}`} </label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleSubtitlesubtitleImageChange(e, subtitleIndex, subsubtitleIndex)}
                 />
                 
-                <label  htmlFor={`Sub Title subdescription ${subtitleIndex + 1}`}
-                className="block text-sm font-medium text-gray-700">{`Sub Title subdescription ${subtitleIndex + 1}`} </label>
+                <label  htmlFor={`Sub Title subdescription ${subsubtitleIndex + 1}`}
+                className="block text-sm font-medium text-gray-700">{`Sub Title subdescription ${subsubtitleIndex + 1}`} </label>
                   <textarea
                   value={subsubtitle.description}
                   onChange={(e) => handleSubtitlesubdescriptionChange(subtitleIndex, subsubtitleIndex, e.target.value)}

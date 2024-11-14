@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
-        const uploadedImageUrl = await uploadImage('main_titles', file);
+        const uploadedImageUrl = await uploadImage('blog', file);
 
         return NextResponse.json({ url: uploadedImageUrl });
     } catch (error) {
