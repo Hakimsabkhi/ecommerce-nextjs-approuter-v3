@@ -1,5 +1,5 @@
 
-import Blog from '@/components/fPost/Post';
+import Blog from '@/components/fPostadmin/Post';
 import { notFound } from 'next/navigation';
 
 import React from 'react';
