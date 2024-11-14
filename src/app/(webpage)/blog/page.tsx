@@ -1,5 +1,5 @@
 
-import Blog from '@/components/fblog/Blog';
+import Blog from '@/components/fPost/Post';
 import Blogbanner from '@/components/blogbanner';
 import React from 'react';
 interface blog {
@@ -17,7 +17,7 @@ interface blog {
 
 async function  getBlogs()  {
    
-      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/GetBlogF`, {
+      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/listpostcustomer`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
