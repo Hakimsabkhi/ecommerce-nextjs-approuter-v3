@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     
       await User.find({})
       await BlogCategory.find({})
-      const Posts = await PostMainSection.find({}).populate('blogCategory').populate('user','_id username').exec();
+      const Posts = await PostMainSection.find({vadmin:'approve'}).populate('blogCategory').populate('user','_id username').exec();
       return NextResponse.json(Posts);
     } catch (error: unknown) {
       // Explicitly assert `error` as an `Error` type

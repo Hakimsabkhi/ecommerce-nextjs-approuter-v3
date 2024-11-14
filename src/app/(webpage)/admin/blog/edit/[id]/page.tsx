@@ -276,7 +276,7 @@ export default function UpdatePost({ params }: { params: { id: string } }) {
       }
       if (Subtitles[subtitleIndex].Postsecondsubsections.length>0){
         for (let i = 0; i < removedImageUrls.length; i++) {
-          const imageUrlsecon=Subtitles[subtitleIndex].Postsecondsubsections[i].imageUrl;
+          const imageUrlsecon=Subtitles[subtitleIndex].Postsecondsubsections[i]?.imageUrl;
           if(imageUrlsecon){
         
           removedImageUrls.push(imageUrlsecon);
