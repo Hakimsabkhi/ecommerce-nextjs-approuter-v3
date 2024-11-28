@@ -35,10 +35,7 @@ interface blogCategory {
   name: string;
 }
 
-interface blogCategory{
-  _id:string
-  name:string
-}
+
 
 interface Blogcompprops {
   blog: blog;

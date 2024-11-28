@@ -19,6 +19,7 @@ export interface IPostMainSection extends Document {
     vadmin:string;
     blogCategory: IBlogCategory | string; 
     user: IUser | string; 
+    numbercomment:number;
     Postfirstsubsections: Postfirstsubsection[]; // Reference to bloggers
 }
 // Helper function to slugify category names
@@ -61,6 +62,7 @@ const PostMainSectionSchema = new mongoose.Schema({
     vadmin:{ type: String,default:'not-approve'},
     blogCategory:{ type: mongoose.Schema.Types.ObjectId, ref: 'BlogCategory' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    numbercomment:{type:Number, default: 0 },
     createdAt: {
         type: Date,
         default: Date.now, // Automatically set the creation date

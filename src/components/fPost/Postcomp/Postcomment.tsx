@@ -1,38 +1,176 @@
-import React from 'react'
+'use client';
+
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import React, { FormEvent, useEffect, useState } from 'react'
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegSmileBeam } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-function Blogcomment() {
+interface Postsecondsubsection {
+    secondtitle: string;
+    description: string;
+    imageUrl?: string;
+    imageFile?: File; // Temporary property to store the selected file before upload
+  }
+  
+  interface Postfirstsubsection {
+    fisttitle: string;
+    description: string;
+    Postsecondsubsections: Postsecondsubsection[];
+    imageUrl?: string;
+    imageFile?: File; // Temporary property to store the selected file before upload
+  }
+  
+  interface blog {
+    _id:string;
+    title: string;
+    description: string;
+    Postfirstsubsections: Postfirstsubsection[];
+    blogCategory: blogCategory;
+    imageUrl?: string;
+    user:User;
+    numbercomment:number;
+    createdAt:string;
+  }
+  interface User{
+   _id:string;
+   username:string
+  }
+  interface blogCategory {
+    _id: string;
+    name: string;
+  }
+  interface comment {
+    _id:string;
+    text:string;
+    user:user;
+    createdAt:string;
+  }
+  interface user{
+    username:string;
+  }
+
+  interface Blogcommentprops{
+    blog:blog
+  }
+const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
+    const { data: session, status } = useSession()
+    const [comment, setComment] = useState('');
+    const [comments, setComments] = useState<comment[]>([]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/comments/getComments/${blog._id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const comments= await response.json(); // Assuming data is an array of Post objects
+        setComments(comments)
+      } catch (err: any) {
+        console.log('Failed to fetch data'); // Set error message if fetching fails
+      }
+    };
+    useEffect(() => {
+     
+  
+      fetchData();
+    }, []);
+    const timeAgo = (date: string): string => {
+      const now = new Date();
+      const commentDate = new Date(date);
+      const diffInSeconds = Math.floor((now.getTime() - commentDate.getTime()) / 1000);
+    
+      const minutes = Math.floor(diffInSeconds / 60);
+      const hours = Math.floor(diffInSeconds / 3600);
+      const days = Math.floor(diffInSeconds / 86400);
+      const weeks = Math.floor(diffInSeconds / 604800);
+    
+      if (weeks > 0) {
+        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+      } else if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+      } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      } else {
+        return 'Just now';
+      }
+    };
+
+   // Handle textarea change
+   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+     setComment(e.target.value);
+   };
+ 
+   // Handle form submit
+   const handleSubmit = async (e: FormEvent) => {
+     e.preventDefault();
+     const post=blog._id;
+      // Optionally validate the comment before sending it
+    if (!comment.trim()) {
+        console.log('Comment cannot be empty');
+        return;
+      }
+  
+      try {
+        // Send comment to the server using a POST request
+        const response = await fetch('/api/comments/postComments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ comment , post}),
+        });
+  
+        if (response.ok) {
+          // If the response is successful, you can clear the comment and log success
+          fetchData();
+          setComment('');
+        } else {
+          // Handle the error if the API call fails
+          console.error('Error submitting comment:', response.statusText);
+        }
+      } catch (error) {
+        // Handle any unexpected errors, like network issues
+        console.error('Error submitting comment:', error);
+      }
+    };
   return (
     <div className='w-full border-2 p-8 rounded-lg flex flex-col gap-4 bg-[#EFEFEF]'>
-                    <div className='flex flex-col gap-8'>
-                        <p className='text-4xl font-bold'>Comments</p>
-                        <div className="relative">
-                            <textarea className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full block p-2.5 h-40" required />
-                            <button className='text-xs px-4 py-2 rounded-md bg-gray-600 text-white absolute top-[60%] right-1/2 translate-x-1/2 translate-y-1/2'>Post Comment</button>
-                        </div>
-                    </div>
+                    <p className='text-4xl font-bold'>Comments</p>
+                  {session?.user!=null ?(<form onSubmit={handleSubmit}  className='flex flex-col gap-8'>
+                       
+                       <div className="grid grid-cols-1 gap-2">
+                           <textarea 
+                            value={comment} // Bind the value of the textarea to the state
+                            onChange={handleChange} // Update state on textarea change
+                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full block p-2.5 h-40" required />
+                        
+                           <button
+                            type="submit"
+                           className='text-xs  px-4 py-2 rounded-md bg-gray-600 text-white '>Comment</button>
+                       </div>
+                   </form>):(<div className='flex justify-center'><Link href="/signin"className='bg-[#15335E] w-full pt-4 pb-4 text-white font-bold uppercase text-4xl rounded-md flex justify-center hover:bg-gray-500'>signin</Link></div>)}  
                     <div className='flex flex-col gap-4'>
                         <div className="flex justify-between items-center">
-                            <p className='text-4xl max-md:text-xl '>3 comments</p>
-                            <select className="px-4 py-1 rounded-md ">
-                                <option>Recent</option>
-                            </select>
+                            <p className='text-4xl max-md:text-xl '>{blog.numbercomment} comments</p>
+                            
                         </div>
-                        <div className="flex flex-col gap-3">
+                        {comments.map((comment) => (        <div className="flex flex-col gap-3">
                             <div className='flex flex-col gap-1'>
-                                <p className='text-xl font-bold'>Jenny Wilson</p>
-                                <p className='text-sm text-gray-400'>1 week ago</p>
+                                <p className='text-xl font-bold'>{comment.user.username}</p>
+                                <p className='text-sm text-gray-400'>              {timeAgo(comment.createdAt)}
+                                </p>
                             </div>
                             <p className='text-sm '>
-                                These running shoes are the best I&apos;ve ever owned. They&apos;re lightweight, supportive, and my feet feel great even after long runs. The cushioning is perfect for absorbing impact.
+                               {comment.text}
                             </p>
                             <div className="flex items-center gap-2">
                                 <div className='flex items-center border-2 py-1 border-gray-400 rounded-md'>
                                     <p className="text-xs">10</p>
                                     <AiOutlineLike />
                                 </div>
-                                <FaRegSmileBeam size={25} className='text-gray-400' />
+                                
                                 <div className='flex items-center border-l-2 border-gray-400 gap-2 pl-2'>
                                     <div className='text-gray-400 flex items-center gap-2'>
                                         <p className='text-gray-400'>2 replies</p>
@@ -41,52 +179,9 @@ function Blogcomment() {
                                     <p>reply</p>
                                 </div>
                             </div>
-                        </div>
+                        </div>))}
                     </div>
-                    <div className='pl-8 pt-6 border-l-2 flex flex-col gap-4 border-gray-700'>
-                        <div className='flex flex-col gap-2'>
-                            <div className='flex flex-col gap-2'>
-                                <p className="font-bold text-3xl">Kevin Patel</p>
-                                <p className='text-gray-400 text-md'>5 days ago</p>
-                            </div>
-                            <p className='text-sm'>
-                                Totally! I ran a half marathon in them last weekend and had zero discomfort. Have you tried them on trails?
-                            </p>
-                            <div className="flex items-center gap-2">
-                                <div className='flex items-center gap-1 border-2 py-1 px-1 border-gray-400 rounded-[4px]'>
-                                    <p className="text-xs">5</p>
-                                    <AiOutlineLike />
-                                </div>
-                                <FaRegSmileBeam size={25} className='text-gray-400' />
-                                <div className='flex items-center border-l-2 border-gray-400 gap-2 pl-2'>
-                                    <p>reply</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            <div className='flex flex-col gap-2'>
-                                <p className="font-bold text-3xl">James Anderson</p>
-                                <p className='text-gray-400 text-md'>2 days ago</p>
-                            </div>
-                            <p className='text-sm'>
-                                I&apos;ve been considering getting these. How do they hold up for indoor workouts?
-                            </p>
-                            <div className="flex items-center gap-2">
-                                <div className='flex items-center border-2 py-1 px-1 gap-1 border-gray-400 rounded-[4px]'>
-                                    <p className="text-xs">5</p>
-                                    <AiOutlineLike />
-                                </div>
-                                <FaRegSmileBeam size={25} className='text-gray-400' />
-                                <div className='flex items-center border-l-2 border-gray-400 gap-2 pl-2'>
-                                    <div className='text-gray-400 flex items-center gap-2'>
-                                        <p className='text-gray-400'>1 reply</p>
-                                        <IoIosArrowDown />
-                                    </div>
-                                    <p>reply</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                
                 </div>
   )
 }

@@ -5,6 +5,7 @@ import "../globals.css";
 import UserMenu from "@/components/userComp/UserMenu";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import StoreProviders from "@/components/ProviderComp/StoreProvider";
 
 
 // Load the Google font
@@ -21,9 +22,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerSession(authOptions);
 
   return (
+    
     <html lang="en">
       <body className={poppins.className}>
-        
+      <StoreProviders>
           <div className="w-full h-[109px] bg-[#15335E] flex justify-center items-center gap-4">
            
             <UserMenu session={session} />
@@ -41,10 +43,13 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             pauseOnHover
             theme="colored"
           />
+          
           {children}
-         
+          </StoreProviders>
       </body>
     </html>
+    
+
   );
 };
 

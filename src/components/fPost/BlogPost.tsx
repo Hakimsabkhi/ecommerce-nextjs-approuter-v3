@@ -22,12 +22,14 @@ interface Postfirstsubsection {
 }
 
 interface blog {
+  _id:string;
   title: string;
   description: string;
   Postfirstsubsections: Postfirstsubsection[];
   blogCategory: blogCategory;
   imageUrl?: string;
   user:User;
+  numbercomment:number;
   createdAt:string;
 }
 interface User{
@@ -39,10 +41,6 @@ interface blogCategory {
   name: string;
 }
 
-interface blogCategory{
-  _id:string
-  name:string
-}
 
   interface blogprops{
     blog:blog
@@ -56,7 +54,7 @@ const BlogPost: React.FC<blogprops> = ({ blog }) => {
                 {/* 1 */}
                 <Blogcomp blog={blog}/>
                 {/* 2 */}
-               <Blogcomment/>
+               <Blogcomment blog={blog}/>
             </div>
             {/* Second Half */}
             <Blogright/>
