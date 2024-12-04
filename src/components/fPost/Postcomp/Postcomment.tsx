@@ -31,6 +31,7 @@ interface Postsecondsubsection {
     user:User;
     numbercomment:number;
     createdAt:string;
+    
   }
   interface User{
    _id:string;
@@ -43,11 +44,19 @@ interface Postsecondsubsection {
   interface comment {
     _id:string;
     text:string;
-    user:user;
+    reply:string;
+    user: {
+      _id: string;
+      username: string;
+    };
+    likes:User[]; 
     createdAt:string;
+    updatedAt:string;
   }
-  interface user{
+  interface  User{
+    _id:string;
     username:string;
+    email:string;
   }
 
   interface Blogcommentprops{
@@ -96,7 +105,32 @@ const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
         return 'Just now';
       }
     };
+    const handleVote = async (action: 'like' | 'dislike' ,id:string) => {
+      if (!session) {
+        console.log("User is not logged in");
+        return; // Exit the function if the user is not logged in
+      } 
+      console.log(action,id)
+      try {
+      const formData = new FormData();
+      formData.append("action", action);
+      const response = await fetch(`/api/comments/vote/${id}`, {
+        method: 'POST',
+        body: formData,
+      });
+ 
+      if (!response.ok) {
+        throw new Error('Failed to vote');
+      }
+      fetchData();
 
+      
+   
+    } catch (error) {
+      console.error('Failed to vote', error);
+    }
+  };
+  
    // Handle textarea change
    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
      setComment(e.target.value);
@@ -135,6 +169,12 @@ const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
         console.error('Error submitting comment:', error);
       }
     };
+    const totalcomment=comments.length;
+    
+  const getlikeColor = (coments:comment) => {
+    return coments.likes.some(user => user.email === session?.user?.email) ? 'blue' : '#9CA3AF';
+  };
+
   return (
     <div className='w-full border-2 p-8 rounded-lg flex flex-col gap-4 bg-[#EFEFEF]'>
                     <p className='text-4xl font-bold'>Comments</p>
@@ -153,7 +193,7 @@ const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
                    </form>):(<div className='flex justify-center'><Link href="/signin"className='bg-[#15335E] w-full pt-4 pb-4 text-white font-bold uppercase text-4xl rounded-md flex justify-center hover:bg-gray-500'>signin</Link></div>)}  
                     <div className='flex flex-col gap-4'>
                         <div className="flex justify-between items-center">
-                            <p className='text-4xl max-md:text-xl '>{blog.numbercomment} comments</p>
+                            <p className='text-4xl max-md:text-xl '>{totalcomment} comments</p>
                             
                         </div>
                         {comments.map((comment) => (        <div className="flex flex-col gap-3">
@@ -165,19 +205,30 @@ const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
                             <p className='text-sm '>
                                {comment.text}
                             </p>
-                            <div className="flex items-center gap-2">
-                                <div className='flex items-center border-2 py-1 border-gray-400 rounded-md'>
-                                    <p className="text-xs">10</p>
-                                    <AiOutlineLike />
-                                </div>
+                            <div className="flex items-center  gap-2">
+                               
+                                    
+                              <button  onClick={() => handleVote('like',comment._id)}>
+                              <AiOutlineLike  className="md:hidden mb-0.5" size={12}  color={getlikeColor(comment)} />
+                              <AiOutlineLike  className="max-md:hidden mb-1" size={17}  color={getlikeColor(comment)} />
+                              </button>
+                              <p className=" text-md  max-md:text-xs text-[#525566]">{comment.likes ? comment.likes.length : 0}</p>
+                            
+                               
                                 
-                                <div className='flex items-center border-l-2 border-gray-400 gap-2 pl-2'>
+                               {comment.reply &&( <div className='flex items-center border-l-2 border-gray-400 gap-2 pl-2'>
                                     <div className='text-gray-400 flex items-center gap-2'>
-                                        <p className='text-gray-400'>2 replies</p>
-                                        <IoIosArrowDown />
+                                        
+                                          <div className='flex flex-col gap-1'>
+                                              <p className='text-sm '>
+                                                  {comment.reply}
+                                                </p>
+                                              <p className='text-xl font-bold'>{blog.user.username}</p>
+                                              <p className='text-[10px] flex justify-end text-gray-400'>  {timeAgo(comment.updatedAt)} </p>
+                                          </div>     
                                     </div>
-                                    <p>reply</p>
-                                </div>
+                                 
+                                </div>)}
                             </div>
                         </div>))}
                     </div>

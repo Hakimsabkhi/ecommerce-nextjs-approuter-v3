@@ -30,11 +30,13 @@ interface blog {
 }
 interface User{
  _id:string;
- username:string
+ username:string;
+ email:string;
 }
 interface blogCategory {
   _id: string;
   name: string;
+
 }
 
 
